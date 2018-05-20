@@ -7,7 +7,7 @@
 #include <QPixmap>
 
 #include "worker.h"
-#include "serial.h"
+//#include "serial.h"
 #include "keyenterreceiver.h"
 
 class Worker;
@@ -146,22 +146,22 @@ public:
         triggerPosition = 0;
     }
 
-    RobotState(bool empty)
-    {
-        leftHorizontalEye = -1;
-        rightHorizontalEye = -1;
-        leftVerticalEye = -1;
-        rightVerticalEye = -1;
-        leftEyebrow = -1;
-        rightEyebrow = -1;
-        leftEyelid = -1;
-        rightEyelid = -1;
-        leftLip = -1;
-        rightLip = -1;
-        jaw = -1;
-        neckTilt = -1;
-        neckTwist = -1;
-    }
+//    RobotState(int reset)
+//    {
+//        leftHorizontalEye = reset;
+//        rightHorizontalEye = reset;
+//        leftVerticalEye = reset;
+//        rightVerticalEye = reset;
+//        leftEyebrow = reset;
+//        rightEyebrow = reset;
+//        leftEyelid = reset;
+//        rightEyelid = reset;
+//        leftLip = reset;
+//        rightLip = reset;
+//        jaw = reset;
+//        neckTilt = reset;
+//        neckTwist = reset;
+//    }
 
     RobotState(const RobotState & r)
     {
@@ -204,7 +204,7 @@ public:
     static const int ARDUINO_SAVE_CONFIG = 33;
     static const int ARDUINO_SAVE_SEQUENCE = 34;
 
-    Serial *serial;
+    //Serial *serial;
 
 signals:
 

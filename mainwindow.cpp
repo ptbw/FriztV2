@@ -17,20 +17,20 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    serial = new Serial();
+    //serial = new Serial();
 
     thread = new QThread();
-    animate = new Animate(serial);
+    animate = new Animate();
 
     animate->moveToThread(thread);
-    //connect(animate, SIGNAL(animate()), this, SLOT(do_Animate()));
+
     connect(animate, SIGNAL(workRequested()), thread, SLOT(start()));
     connect(thread, SIGNAL(started()), animate, SLOT(doWork()));
     connect(animate, SIGNAL(done()), this, SLOT(on_Stop()));
     connect(animate, SIGNAL(finished()), thread, SLOT(quit()), Qt::DirectConnection);
 
-    Robot robot(serial);
-    robot.SetExpression("Neutral");
+    //Robot robot;
+    //robot.SetExpression("Neutral");
 
     animationRunning = false;
 }
@@ -43,7 +43,7 @@ MainWindow::~MainWindow()
         animationRunning = false;
         animate->abort();
     }
-    delete serial;
+    //delete serial;
     delete ui;
 }
 
@@ -61,7 +61,7 @@ void MainWindow::on_Stop()
 void MainWindow::on_actionConfig_triggered()
 {
     ConfigWindow w;
-    w.serial = serial;
+    //w.serial = serial;
     w.exec();
 }
 
@@ -89,14 +89,14 @@ void MainWindow::on_actionQuit_triggered()
 
 void MainWindow::on_comboBox_activated(const QString &arg1)
 {
-    Robot robot(serial);
+    Robot robot;
     robot.SetExpression(arg1);
     I::msleep(5000); 
 }
 
 void MainWindow::SpeakMessage(QString msg)
 {
-    Robot robot(serial);
+    Robot robot;
     robot.SpeakMessage(msg);
 }
 
@@ -139,35 +139,24 @@ void MainWindow::on_btnThanks_clicked()
 void MainWindow::on_btnLeft_clicked()
 {
     //SetState(int n_leftHorizontalEye, int n_leftVerticalEye, int n_rightHorizontalEye, int n_rightVerticalEye, int n_leftEyebrow, int n_rightEyebrow, int n_rightEyelid, int n_leftEyelid, int n_leftLip, int n_rightLip, int n_jaw, int n_neckTilt, int n_neckTwist);
-    Robot robot(serial);
+    Robot robot;
     robot.SetState(40, -1, 40, -1, 30, 70, 100, 100, 50, 50, 50, -1, 10);
 }
 
 void MainWindow::on_btnCentre_clicked()
 {
-    Robot robot(serial);
+    Robot robot;
     robot.SetState(40, -1, 40, -1, 50, 50, 100, 100, 50, 50, 50, -1, 50);
 }
 
 void MainWindow::on_btnRight_clicked()
 {
-    Robot robot(serial);
+    Robot robot;
     robot.SetState(40, -1, 40, -1, 30, 70, 100, 100, 50, 50, 50, -1, 90);
 }
 
 void MainWindow::on_btnAnimate_clicked()
 {
-//    if( thread->isRunning())
-//    {
-//        animate->abort();
-//        thread->wait();
-//        ui->btnAnimate->setText("Animate");
-//    }
-//    else
-//    {
-//        animate->requestWork();
-//        ui->btnAnimate->setText("Stop Animate");
-//     }
      if(animationRunning)
      {
          ui->btnAnimate->setText("Animate");

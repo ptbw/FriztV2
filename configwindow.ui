@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1055</width>
-    <height>666</height>
+    <height>772</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,9 +19,9 @@
   <widget class="QDialogButtonBox" name="btnCancelSave">
    <property name="geometry">
     <rect>
-     <x>660</x>
-     <y>620</y>
-     <width>341</width>
+     <x>840</x>
+     <y>710</y>
+     <width>171</width>
      <height>32</height>
     </rect>
    </property>
@@ -167,7 +167,7 @@
        <number>17</number>
       </property>
       <property name="value">
-       <number>2</number>
+       <number>11</number>
       </property>
      </widget>
     </item>
@@ -190,8 +190,8 @@
   <widget class="QPushButton" name="btnRunTests">
    <property name="geometry">
     <rect>
-     <x>830</x>
-     <y>580</y>
+     <x>840</x>
+     <y>670</y>
      <width>171</width>
      <height>27</height>
     </rect>
@@ -259,7 +259,7 @@
        <number>17</number>
       </property>
       <property name="value">
-       <number>7</number>
+       <number>12</number>
       </property>
      </widget>
     </item>
@@ -575,7 +575,7 @@
        <number>17</number>
       </property>
       <property name="value">
-       <number>8</number>
+       <number>9</number>
       </property>
      </widget>
     </item>
@@ -710,7 +710,7 @@
        <number>17</number>
       </property>
       <property name="value">
-       <number>4</number>
+       <number>7</number>
       </property>
      </widget>
     </item>
@@ -980,7 +980,7 @@
        <number>17</number>
       </property>
       <property name="value">
-       <number>6</number>
+       <number>3</number>
       </property>
      </widget>
     </item>
@@ -997,7 +997,7 @@
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>600</y>
+     <y>700</y>
      <width>351</width>
      <height>35</height>
     </rect>
@@ -1060,7 +1060,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>550</y>
+     <y>650</y>
      <width>371</width>
      <height>91</height>
     </rect>
@@ -1076,7 +1076,7 @@
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>560</y>
+     <y>660</y>
      <width>351</width>
      <height>35</height>
     </rect>
@@ -1250,7 +1250,7 @@
        <number>17</number>
       </property>
       <property name="value">
-       <number>3</number>
+       <number>10</number>
       </property>
      </widget>
     </item>
@@ -1308,13 +1308,6 @@
      </widget>
     </item>
     <item>
-     <widget class="QLabel" name="label_44">
-      <property name="text">
-       <string>Max:</string>
-      </property>
-     </widget>
-    </item>
-    <item>
      <widget class="QLineEdit" name="rightHorizontalEyeMax">
       <property name="text">
        <string>270</string>
@@ -1353,6 +1346,13 @@
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_19">
     <item>
+     <widget class="QLabel" name="label_44">
+      <property name="text">
+       <string>Max:</string>
+      </property>
+     </widget>
+    </item>
+    <item>
      <widget class="QLabel" name="label_45">
       <property name="text">
        <string>Right Horizontal Eye</string>
@@ -1385,7 +1385,7 @@
        <number>17</number>
       </property>
       <property name="value">
-       <number>9</number>
+       <number>8</number>
       </property>
      </widget>
     </item>
@@ -1520,7 +1520,7 @@
        <number>17</number>
       </property>
       <property name="value">
-       <number>10</number>
+       <number>6</number>
       </property>
      </widget>
     </item>
@@ -1655,7 +1655,7 @@
        <number>17</number>
       </property>
       <property name="value">
-       <number>11</number>
+       <number>4</number>
       </property>
      </widget>
     </item>
@@ -1790,7 +1790,7 @@
        <number>17</number>
       </property>
       <property name="value">
-       <number>14</number>
+       <number>2</number>
       </property>
      </widget>
     </item>
@@ -1802,19 +1802,6 @@
      </widget>
     </item>
    </layout>
-  </widget>
-  <widget class="QLabel" name="label_62">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>640</y>
-     <width>761</width>
-     <height>17</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Note: Pin nos 14,15,16 and 17 relate to A0 through A3</string>
-   </property>
   </widget>
   <widget class="QPushButton" name="btnTestSpeech_5">
    <property name="geometry">
@@ -1867,6 +1854,142 @@
     <bool>true</bool>
    </property>
   </widget>
+  <widget class="QWidget" name="layoutWidget_23">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>600</y>
+     <width>351</width>
+     <height>35</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_26">
+    <item>
+     <widget class="QLabel" name="label_62">
+      <property name="text">
+       <string>Min:</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="raiseNeckMin">
+      <property name="text">
+       <string>5</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="label_63">
+      <property name="text">
+       <string>Centre:</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="raiseNeckTrim">
+      <property name="text">
+       <string>90</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="label_64">
+      <property name="text">
+       <string>Max:</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="raiseNeckMax">
+      <property name="text">
+       <string>175</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="layoutWidget_24">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>560</y>
+     <width>351</width>
+     <height>35</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_27">
+    <item>
+     <widget class="QLabel" name="label_65">
+      <property name="text">
+       <string>Raise Neck</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <spacer name="horizontalSpacer_13">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item>
+     <widget class="QLabel" name="label_66">
+      <property name="text">
+       <string>Pin:</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QSpinBox" name="raiseNeckPin">
+      <property name="maximum">
+       <number>17</number>
+      </property>
+      <property name="value">
+       <number>1</number>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="raiseNeckTest">
+      <property name="text">
+       <string>Test</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QFrame" name="frame_13">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>550</y>
+     <width>371</width>
+     <height>91</height>
+    </rect>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+  </widget>
+  <zorder>frame_13</zorder>
   <zorder>frame_2</zorder>
   <zorder>frame</zorder>
   <zorder>frame_3</zorder>
@@ -1913,10 +2036,11 @@
   <zorder>layoutWidget_20</zorder>
   <zorder>layoutWidget_21</zorder>
   <zorder>layoutWidget_22</zorder>
-  <zorder>label_62</zorder>
   <zorder>btnTestSpeech_5</zorder>
   <zorder>textSonar</zorder>
   <zorder>btnTestSonar</zorder>
+  <zorder>layoutWidget_23</zorder>
+  <zorder>layoutWidget_24</zorder>
  </widget>
  <tabstops>
   <tabstop>comboBox</tabstop>

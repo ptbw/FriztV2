@@ -151,22 +151,26 @@ ConfigWindow::~ConfigWindow()
 
 void ConfigWindow::ActivateTest(const int val)
 {
-    serial->DoTest(ui->leftEyebrowTest->checkState(),ui->leftEyebrowMin->text().toInt(), ui->leftEyebrowMax->text().toInt(),ui->leftEyebrowPin->text().toInt(), val );
-    serial->DoTest(ui->rightEyebrowTest->checkState(), ui->rightEyebrowMin->text().toInt(), ui->rightEyebrowMax->text().toInt(), ui->rightEyebrowPin->text().toInt(), val );
-    serial->DoTest(ui->leftEyelidTest->checkState(), ui->leftEyelidMin->text().toInt(), ui->leftEyelidMax->text().toInt(), ui->leftEyelidPin->text().toInt(), val );
-    serial->DoTest(ui->rightEyelidTest->checkState(), ui->rightEyelidMin->text().toInt(), ui->rightEyelidMax->text().toInt(), ui->rightEyelidPin->text().toInt(), val );
+      Robot robot;
+//    serial->DoTest(ui->leftEyebrowTest->checkState(),ui->leftEyebrowMin->text().toInt(), ui->leftEyebrowMax->text().toInt(),ui->leftEyebrowPin->text().toInt(), val );
+//    serial->DoTeotst(ui->rightEyebrowTest->checkState(), ui->rightEyebrowMin->text().toInt(), ui->rightEyebrowMax->text().toInt(), ui->rightEyebrowPin->text().toInt(), val );
+//    serial->DoTest(ui->leftEyelidTest->checkState(), ui->leftEyelidMin->text().toInt(), ui->leftEyelidMax->text().toInt(), ui->leftEyelidPin->text().toInt(), val );
+//    serial->DoTest(ui->rightEyelidTest->checkState(), ui->rightEyelidMin->text().toInt(), ui->rightEyelidMax->text().toInt(), ui->rightEyelidPin->text().toInt(), val );
 
-    serial->DoTest(ui->leftHorizontalEyeTest->checkState(), ui->leftHorizontalEyeMin->text().toInt(), ui->leftHorizontalEyeMax->text().toInt(), ui->leftHorizontalEyePin->text().toInt(), val );
-    serial->DoTest(ui->rightHorizontalEyeTest->checkState(), ui->rightHorizontalEyeMin->text().toInt(), ui->rightHorizontalEyeMax->text().toInt(), ui->rightHorizontalEyePin->text().toInt(), val );
+//    serial->DoTest(ui->leftHorizontalEyeTest->checkState(), ui->leftHorizontalEyeMin->text().toInt(), ui->leftHorizontalEyeMax->text().toInt(), ui->leftHorizontalEyePin->text().toInt(), val );
+//    serial->DoTest(ui->rightHorizontalEyeTest->checkState(), ui->rightHorizontalEyeMin->text().toInt(), ui->rightHorizontalEyeMax->text().toInt(), ui->rightHorizontalEyePin->text().toInt(), val );
 
-    serial->DoTest(ui->leftVerticalEyeTest->checkState(), ui->leftVerticalEyeMin->text().toInt(), ui->leftVerticalEyeMax->text().toInt(), ui->leftVerticalEyePin->text().toInt(), val );
-    serial->DoTest(ui->rightVerticalEyeTest->checkState(), ui->rightVerticalEyeMin->text().toInt(), ui->rightVerticalEyeMax->text().toInt(), ui->rightVerticalEyePin->text().toInt(), val );
+//    serial->DoTest(ui->leftVerticalEyeTest->checkState(), ui->leftVerticalEyeMin->text().toInt(), ui->leftVerticalEyeMax->text().toInt(), ui->leftVerticalEyePin->text().toInt(), val );
+//    serial->DoTest(ui->rightVerticalEyeTest->checkState(), ui->rightVerticalEyeMin->text().toInt(), ui->rightVerticalEyeMax->text().toInt(), ui->rightVerticalEyePin->text().toInt(), val );
 
-    serial->DoTest(ui->leftLipTest->checkState(), ui->leftLipMin->text().toInt(), ui->leftLipMax->text().toInt(), ui->leftLipPin->text().toInt(), val );
-    serial->DoTest(ui->rightLipTest->checkState(), ui->rightLipMin->text().toInt(), ui->rightLipMax->text().toInt(), ui->rightLipPin->text().toInt(), val );
+//    serial->DoTest(ui->leftLipTest->checkState(), ui->leftLipMin->text().toInt(), ui->leftLipMax->text().toInt(), ui->leftLipPin->text().toInt(), val );
+//    serial->DoTest(ui->rightLipTest->checkState(), ui->rightLipMin->text().toInt(), ui->rightLipMax->text().toInt(), ui->rightLipPin->text().toInt(), val );
 
-    serial->DoTest(ui->twistNeckTest->checkState(), ui->twistNeckMin->text().toInt(), ui->twistNeckMax->text().toInt(), ui->twistNeckPin->text().toInt(), val );
-    serial->DoTest(ui->jawTest->checkState(), ui->jawMin->text().toInt(), ui->jawMax->text().toInt(), ui->jawPin->text().toInt(), val );
+//    serial->DoTest(ui->twistNeckTest->checkState(), ui->twistNeckMin->text().toInt(), ui->twistNeckMax->text().toInt(), ui->twistNeckPin->text().toInt(), val );
+//    serial->DoTest(ui->jawTest->checkState(), ui->jawMin->text().toInt(), ui->jawMax->text().toInt(), ui->jawPin->text().toInt(), val );
+
+      robot.SetServo(ui->twistNeckTest->checkState(), ui->twistNeckMin->text().toInt(), ui->twistNeckMax->text().toInt(), ui->twistNeckPin->text().toInt(), val );
+      robot.SetServo(ui->raiseNeckTest->checkState(), ui->raiseNeckMin->text().toInt(), ui->raiseNeckMax->text().toInt(), ui->raiseNeckPin->text().toInt(), val );
 }
 
 
@@ -191,7 +195,7 @@ void ConfigWindow::on_pushButton_clicked()
 {   
     //int version = TestSerial();
 
-    int version = serial->GetVersion();
+    int version = 0; //serial->GetVersion();
 
     if(version == -1)
         QMessageBox::warning(this, "Port error","Couldn't find the Arduino!");
@@ -207,28 +211,30 @@ void ConfigWindow::on_pushButton_clicked()
 
 int ConfigWindow::GetVersion()
 {
-    int version = serial->TestSerial();    
+    int version = 0; //serial->TestSerial();
     return version;
 }
 
 
 void ConfigWindow::SetServo(int pin, float value, int max, int min, int trim, bool inverted /*= false*/)
 {
-  int val;
-  if (inverted)
+    int val;
+    if (inverted)
     val = (short)(((1.0f - value) * (max - min)) + min + trim);
-  else
+    else
     val = (short)((value * (max - min)) + min + trim);
 
-  if (val > max) val = max;
-  if (val < min) val = min;
+    if (val > max) val = max;
+    if (val < min) val = min;
 
-  serial->SendCommand(ARDUINO_SET_SERVO, pin, (short)val + 1500);
+    SetServo(pin, val);
+
 }
 
 void ConfigWindow::SetServo(int pin, int value)
 {
-   serial->SendCommand(ARDUINO_SET_SERVO, pin, (short)value + 1500);
+    Robot robot;
+    robot.SetServo(pin, value);
 }
 
 void ConfigWindow::on_btnRunTests_clicked()
@@ -291,36 +297,23 @@ void ConfigWindow::on_btnTestSpeech_4_clicked()
 
 void ConfigWindow::on_btnTestSpeech_5_clicked()
 {
-    Speak speak;
-    Robot robot(serial);
     QString msg = "Your reasoning is excellent. It's only your basic assumptions that are wrong.";
     if( ui->textToSay->text() != "" )
         msg = ui->textToSay->text();
 
     SpeakMessage(msg);
-
-//    QStringList phons = speak.TextToPhon(msg);
-//    speak.TextToSpeech(msg);
-
-//    QStringListIterator iterator(phons);
-//    while (iterator.hasNext())
-//    {
-//        QString shape = speak.GetMouthShape(iterator.next());
-//        robot.SetMouth(shape);
-//        I::msleep(10);
-//    }
 }
 
 void ConfigWindow::SpeakMessage(QString msg)
 {
-    Robot robot(serial);
+    Robot robot;
     robot.SpeakMessage(msg);
 }
 
 
 void ConfigWindow::on_btnTestSonar_clicked()
 {
-    Robot robot(serial);
+    Robot robot;
     double distance = robot.GetSonar();
     QString msg = QString::number(distance);
     ui->textSonar->setText(msg);

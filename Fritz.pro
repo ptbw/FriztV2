@@ -20,7 +20,10 @@ SOURCES += main.cpp\
     speak.cpp \
     worker.cpp \
     keyenterreceiver.cpp \
-    animate.cpp
+    animate.cpp \
+    BCM2835.c \
+    Adafruit_ServoHAT.c \
+    PCA9685.c
 
 HEADERS  += mainwindow.h \
     configwindow.h \
@@ -30,7 +33,12 @@ HEADERS  += mainwindow.h \
     speak.h \
     worker.h \
     keyenterreceiver.h \
-    animate.h
+    animate.h \
+    BCM2835.h \
+    Adafruit_ServoHAT.h \
+    PCA9685.h \
+    Standard_Library.h \
+    System_Library.h
 
 FORMS    += mainwindow.ui \
     aboutbox.ui \

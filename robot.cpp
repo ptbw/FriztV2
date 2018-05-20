@@ -1,19 +1,29 @@
+#include "Standard_Library.h"
+#include "System_Library.h"
+extern "C" {
+#include "BCM2835.h"
+#include "PCA9685.h"
+#include "Adafruit_ServoHAT.h"
+}
+
 #include "robot.h"
 
-Robot::Robot(Serial *serial)
+#define FREQUENCY 300
+#define SERVOHATADDR 0x40
+#define SERVOMIN 300
+
+Robot::Robot()
 {
-    //serial = new Serial();
-    this->serial = serial;
 
-    const int minPin = 2;
-    const int maxPin = 19;
+    //const int minPin = 0;
+    //const int maxPin = 11;
 
-    float irValue = 1000.0f;
-    float sonarValue = 1000.0f;
+    //float irValue = 1000.0f;
+    //float sonarValue = 1000.0f;
 
     cd = new CalibrationData();
 
-    RobotState initState = new RobotState();
+    //RobotState initState = new RobotState();
 
 //    leftHorizontalEye = f_leftHorizontalEye = initState.leftHorizontalEye;
 //    leftVerticalEye = f_leftVerticalEye = initState.leftVerticalEye;
@@ -74,6 +84,16 @@ Robot::Robot(Serial *serial)
 
      // Prime the distance sensor
      // GetSonar();
+
+     map_peripheral_BCM2835(&gpio);
+     map_peripheral_BCM2835(&bsc0);
+
+     init_I2C_protocol();
+     init_PCA9685(SERVOHATADDR);
+     set_PWM_frequency_PCA9685(SERVOHATADDR, FREQUENCY);
+     init_angle_to_pulse_length_lookup_table();
+     set_PWM_PCA9685(SERVOHATADDR, 0, 0, SERVOMIN);
+     set_PWM_PCA9685(SERVOHATADDR, 1, 0, SERVOMIN);
 }
 
 Robot::~Robot()
@@ -83,132 +103,152 @@ Robot::~Robot()
 
 void Robot::Reset()
 {
-    RobotState initState = new RobotState();
+    //RobotState initState = new RobotState();
 }
 
 
 double Robot::GetSonar()
-{
-     serial->SendCommand(ARDUINO_GET_SONAR, sonarOutPin, sonarInPin);
-     sonarValue = serial->GetSonar();
+{ 
+     sonarValue = 0;
 
      return sonarValue;
 }
+
+void Robot::SetServo(int pin, int pos)
+{
+    set_servo(SERVOHATADDR, pin, FREQUENCY, pos);
+}
+
+
+void Robot::SetServo( Qt::CheckState state, int min, int max, int pin, int val)
+{
+    if(val < min)
+       val = min;
+
+    if(val > max)
+        val = max;
+
+    if(state == Qt::Checked)
+    {
+        SetServo(pin, val);
+    }
+}
+
 
 void Robot::SetMouth(QString shape)
 {
    if(shape == "aaah")
     {
-        serial->DoTest(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 90 );
-        serial->DoTest(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 90 );
-        serial->DoTest(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 50 );
-        serial->DoTest(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 50 );
-        serial->DoTest(Qt::Checked, jawMin, jawMax, jawPin, 0);
+//        serial->DoTest(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 90 );
+//        serial->DoTest(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 90 );
+//        serial->DoTest(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 50 );
+//        serial->DoTest(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 50 );
+//        serial->DoTest(Qt::Checked, jawMin, jawMax, jawPin, 0);
     }
     else if(shape == "oh")
     {
-        serial->DoTest(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 70 );
-        serial->DoTest(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 70 );
-        serial->DoTest(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 10 );
-        serial->DoTest(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 90 );
-        serial->DoTest(Qt::Checked, jawMin, jawMax, jawPin, 50);
+//        serial->DoTest(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 70 );
+//        serial->DoTest(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 70 );
+//        serial->DoTest(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 10 );
+//        serial->DoTest(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 90 );
+//        serial->DoTest(Qt::Checked, jawMin, jawMax, jawPin, 50);
     }
     else if(shape == "aa")
     {
-        serial->DoTest(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 70 );
-        serial->DoTest(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 70 );
-        serial->DoTest(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 10 );
-        serial->DoTest(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 90 );
-        serial->DoTest(Qt::Checked, jawMin, jawMax, jawPin, 20);
+//        serial->DoTest(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 70 );
+//        serial->DoTest(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 70 );
+//        serial->DoTest(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 10 );
+//        serial->DoTest(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 90 );
+//        serial->DoTest(Qt::Checked, jawMin, jawMax, jawPin, 20);
     }
     else if(shape == "i")
     {
-        serial->DoTest(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 70 );
-        serial->DoTest(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 70 );
-        serial->DoTest(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 30 );
-        serial->DoTest(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 70 );
-        serial->DoTest(Qt::Checked, jawMin, jawMax, jawPin, 100);
+//        serial->DoTest(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 70 );
+//        serial->DoTest(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 70 );
+//        serial->DoTest(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 30 );
+//        serial->DoTest(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 70 );
+//        serial->DoTest(Qt::Checked, jawMin, jawMax, jawPin, 100);
     }
     else if(shape == "laa")
     {
-        serial->DoTest(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 90 );
-        serial->DoTest(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 90 );
-        serial->DoTest(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 70 );
-        serial->DoTest(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 30 );
-        serial->DoTest(Qt::Checked, jawMin, jawMax, jawPin, 20);
+//        serial->DoTest(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 90 );
+//        serial->DoTest(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 90 );
+//        serial->DoTest(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 70 );
+//        serial->DoTest(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 30 );
+//        serial->DoTest(Qt::Checked, jawMin, jawMax, jawPin, 20);
     }
     else if(shape == "sss")
     {
-        serial->DoTest(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 70 );
-        serial->DoTest(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 70 );
-        serial->DoTest(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 20 );
-        serial->DoTest(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 80 );
-        serial->DoTest(Qt::Checked, jawMin, jawMax, jawPin, 90);
+//        serial->DoTest(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 70 );
+//        serial->DoTest(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 70 );
+//        serial->DoTest(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 20 );
+//        serial->DoTest(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 80 );
+//        serial->DoTest(Qt::Checked, jawMin, jawMax, jawPin, 90);
     }
     else if(shape == "eee")
     {
-        serial->DoTest(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 70 );
-        serial->DoTest(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 70 );
-        serial->DoTest(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 10 );
-        serial->DoTest(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 90 );
-        serial->DoTest(Qt::Checked, jawMin, jawMax, jawPin, 30);
+//        serial->DoTest(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 70 );
+//        serial->DoTest(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 70 );
+//        serial->DoTest(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 10 );
+//        serial->DoTest(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 90 );
+//        serial->DoTest(Qt::Checked, jawMin, jawMax, jawPin, 30);
     }
     else if(shape == "oh")
     {
-        serial->DoTest(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 90 );
-        serial->DoTest(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 90 );
-        serial->DoTest(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 50 );
-        serial->DoTest(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 50 );
-        serial->DoTest(Qt::Checked, jawMin, jawMax, jawPin, 10);
+//        serial->DoTest(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 90 );
+//        serial->DoTest(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 90 );
+//        serial->DoTest(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 50 );
+//        serial->DoTest(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 50 );
+//        serial->DoTest(Qt::Checked, jawMin, jawMax, jawPin, 10);
     }
     else if(shape == "oooh")
     {
-        serial->DoTest(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 90 );
-        serial->DoTest(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 90 );
-        serial->DoTest(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 20 );
-        serial->DoTest(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 80 );
-        serial->DoTest(Qt::Checked, jawMin, jawMax, jawPin, 0);
+//        serial->DoTest(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 90 );
+//        serial->DoTest(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 90 );
+//        serial->DoTest(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 20 );
+//        serial->DoTest(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 80 );
+//        serial->DoTest(Qt::Checked, jawMin, jawMax, jawPin, 0);
     }
     else if(shape == "fuh")
     {
-        serial->DoTest(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 90 );
-        serial->DoTest(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 90 );
-        serial->DoTest(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 50 );
-        serial->DoTest(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 50 );
-        serial->DoTest(Qt::Checked, jawMin, jawMax, jawPin, 90);
+//        serial->DoTest(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 90 );
+//        serial->DoTest(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 90 );
+//        serial->DoTest(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 50 );
+//        serial->DoTest(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 50 );
+//        serial->DoTest(Qt::Checked, jawMin, jawMax, jawPin, 90);
     }
     else if(shape == "mmm")
     {
-        serial->DoTest(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 70 );
-        serial->DoTest(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 70 );
-        serial->DoTest(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 40 );
-        serial->DoTest(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 60 );
-        serial->DoTest(Qt::Checked, jawMin, jawMax, jawPin, 100);
+//        serial->DoTest(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 70 );
+//        serial->DoTest(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 70 );
+//        serial->DoTest(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 40 );
+//        serial->DoTest(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 60 );
+//        serial->DoTest(Qt::Checked, jawMin, jawMax, jawPin, 100);
     }
     else
     {
-        serial->DoTest(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 70 );
-        serial->DoTest(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 70 );
-        serial->DoTest(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 50 );
-        serial->DoTest(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 50 );
-        serial->DoTest(Qt::Checked, jawMin, jawMax, jawPin, 100);
+//        serial->DoTest(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 70 );
+//        serial->DoTest(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 70 );
+//        serial->DoTest(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 50 );
+//        serial->DoTest(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 50 );
+//        serial->DoTest(Qt::Checked, jawMin, jawMax, jawPin, 100);
     }
 }
 
 void Robot::SetState(int n_leftHorizontalEye, int n_leftVerticalEye, int n_rightHorizontalEye, int n_rightVerticalEye, int n_leftEyebrow, int n_rightEyebrow, int n_rightEyelid, int n_leftEyelid, int n_leftLip, int n_rightLip, int n_jaw, int n_neckTilt, int n_neckTwist)
 {
-    if (n_leftEyebrow != -1) serial->DoTest(Qt::Checked, leftEyebrowMin, leftEyebrowMax,leftEyebrowPin, n_leftEyebrow );
-    if (n_rightEyebrow != -1) serial->DoTest(Qt::Checked, rightEyebrowMin, rightEyebrowMax, rightEyebrowPin, n_rightEyebrow );
-    if (n_leftEyelid != -1) serial->DoTest(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, n_leftEyelid );
-    if (n_rightEyelid != -1) serial->DoTest(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, n_rightEyelid );
-    if (n_leftHorizontalEye != -1) serial->DoTest(Qt::Checked, leftHorizontalEyeMin, leftHorizontalEyeMax, leftHorizontalEyePin, n_leftHorizontalEye );
-    if (n_rightHorizontalEye != -1) serial->DoTest(Qt::Checked, rightHorizontalEyeMin, rightHorizontalEyeMax, rightHorizontalEyePin, n_rightHorizontalEye );
-    if (n_leftVerticalEye != -1) serial->DoTest(Qt::Checked, leftVerticalEyeMin, leftVerticalEyeMax, leftVerticalEyePin, n_leftVerticalEye );
-    if (n_rightVerticalEye != -1) serial->DoTest(Qt::Checked, rightVerticalEyeMin, rightVerticalEyeMax, rightVerticalEyePin, n_rightVerticalEye );
-    if (n_leftLip != -1) serial->DoTest(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, n_leftLip );
-    if (n_rightLip != -1) serial->DoTest(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, n_rightLip );
-    if (n_neckTwist != -1) serial->DoTest(Qt::Checked, neckTwistMin, neckTwistMax, neckTwistPin, n_neckTwist );
-    if (n_jaw != -1) serial->DoTest(Qt::Checked, jawMin, jawMax, jawPin, n_jaw );
+//    if (n_leftEyebrow != -1) serial->DoTest(Qt::Checked, leftEyebrowMin, leftEyebrowMax,leftEyebrowPin, n_leftEyebrow );
+//    if (n_rightEyebrow != -1) serial->DoTest(Qt::Checked, rightEyebrowMin, rightEyebrowMax, rightEyebrowPin, n_rightEyebrow );
+//    if (n_leftEyelid != -1) serial->DoTest(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, n_leftEyelid );
+//    if (n_rightEyelid != -1) serial->DoTest(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, n_rightEyelid );
+//    if (n_leftHorizontalEye != -1) serial->DoTest(Qt::Checked, leftHorizontalEyeMin, leftHorizontalEyeMax, leftHorizontalEyePin, n_leftHorizontalEye );
+//    if (n_rightHorizontalEye != -1) serial->DoTest(Qt::Checked, rightHorizontalEyeMin, rightHorizontalEyeMax, rightHorizontalEyePin, n_rightHorizontalEye );
+//    if (n_leftVerticalEye != -1) serial->DoTest(Qt::Checked, leftVerticalEyeMin, leftVerticalEyeMax, leftVerticalEyePin, n_leftVerticalEye );
+//    if (n_rightVerticalEye != -1) serial->DoTest(Qt::Checked, rightVerticalEyeMin, rightVerticalEyeMax, rightVerticalEyePin, n_rightVerticalEye );
+//    if (n_leftLip != -1) serial->DoTest(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, n_leftLip );
+//    if (n_rightLip != -1) serial->DoTest(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, n_rightLip );
+//    if (n_neckTwist != -1) serial->DoTest(Qt::Checked, neckTwistMin, neckTwistMax, neckTwistPin, n_neckTwist );
+//    if (n_jaw != -1) serial->DoTest(Qt::Checked, jawMin, jawMax, jawPin, n_jaw );
 }
 
 void Robot::SetExpression(QString name)
@@ -318,19 +358,19 @@ void Robot::SpeakMessage(QString msg)
     SpeakWord(msg);
     return;
 
-    QStringList words = msg.split(",",QString::SkipEmptyParts);
-    QStringListIterator iterator(words);
-    while (iterator.hasNext())
-    {
-       SpeakWord(iterator.next());
-       I::msleep(100);
-    }
+//    QStringList words = msg.split(",",QString::SkipEmptyParts);
+//    QStringListIterator iterator(words);
+//    while (iterator.hasNext())
+//    {
+//       SpeakWord(iterator.next());
+//       I::msleep(100);
+//    }
 }
 
 void Robot::SpeakWord(QString msg)
 {
     Speak speak;
-    Robot robot(serial);
+    Robot robot;
 
     QStringList phons = speak.TextToPhon(msg);
     speak.TextToSpeech(msg);

@@ -4,12 +4,12 @@
 #include "speak.h"
 #include <QProcess>
 
-Animate::Animate(Serial *serial) :
+Animate::Animate() :
     QObject(0)
 {
     _working = false;
     _abort = false;
-    _serial = serial;
+    //_serial = serial;
 
     text << "Good morning! How are you?"
          << "My brain is a Raspberry Pi"
@@ -34,7 +34,7 @@ void Animate::doWork()
     double sonar = 0;
     double previous = 9999;
     bool running = true;
-    Robot robot(_serial);
+    Robot robot;
 
     robot.SetCentre();
     I::msleep(500);
@@ -81,9 +81,7 @@ void Animate::doWork()
            {
                dir = dir * -1;
            }
-           //qWarning() << QObject::tr("Angle %1").arg(angle) << endl;
            robot.SetNeck(angle);
-           //I::msleep(100);
         }
      }
     emit done();
@@ -92,15 +90,15 @@ void Animate::doWork()
 
 void Animate::doWorkOld()
 {
-    Robot robot(_serial);
+    Robot robot;
     QTime time = QTime::currentTime();
     qsrand((uint)time.msec());
 
     int dir = 1;
     int angle = 10;
     double previous = 9999;
-    robot.SetCentre();
-    robot.SetNeck(angle);
+    //robot.SetCentre();
+    //robot.SetNeck(angle);
 
     bool running = true;
     while(running)
@@ -116,13 +114,12 @@ void Animate::doWorkOld()
 
         int value = (int)(qrand() % 10);
         mutex.lock();
-        double sonar = robot.GetSonar();
+        double sonar = 0; //robot.GetSonar();
         //qWarning() << "Sonar: " << sonar << endl;
         mutex.unlock();
 
         //if( sonar < 9999)
         //{
-            //qWarning() << QObject::tr("SonarValue %1").arg(sonar) << endl;
             if(sonar <= 40.0 && sonar != previous)
             {
                 QString msg = text.at(value);
@@ -137,8 +134,7 @@ void Animate::doWorkOld()
                {
                    dir = dir * -1;
                }
-               //qWarning() << QObject::tr("Angle %1").arg(angle) << endl;
-               robot.SetNeck(angle);
+               //robot.SetNeck(angle);
                I::msleep(500);
            //}
         }
@@ -150,7 +146,7 @@ void Animate::doWorkOld()
 void Animate::SpeakMessage(QString msg)
 {
     //Speak speak;
-    Robot robot(_serial);
+    Robot robot;
 
     robot.SpeakMessage(msg);
     return;

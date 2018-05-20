@@ -4,7 +4,7 @@
 #include <QMainWindow>
 
 #include "animate.h"
-#include "serial.h"
+//#include "serial.h"
 
 class Animate;
 
@@ -87,7 +87,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
-    Serial *serial;
+    //Serial *serial;
 
     Animate *animate;
 

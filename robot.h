@@ -1,7 +1,7 @@
 #ifndef ROBOT_H
 #define ROBOT_H
 
-#include "serial.h"
+//#include "serial.h"
 #include "configwindow.h"
 #include "speak.h"
 #include "i.h"
@@ -90,15 +90,20 @@ private:
 
     CalibrationData * cd;
 
-    Serial * serial;
+    //Serial * serial;
 
 
 public:
-    Robot(Serial * serial);
+    //Robot(Serial * serial);
+    Robot();
     ~Robot();
 
     void Reset();    
     double GetSonar();
+
+    void SetServo(int pin, int val);
+    void SetServo(Qt::CheckState state, int min, int max, int pin, int val);
+
     void SetState(int n_leftHorizontalEye, int n_leftVerticalEye, int n_rightHorizontalEye, int n_rightVerticalEye, int n_leftEyebrow, int n_rightEyebrow, int n_rightEyelid, int n_leftEyelid, int n_leftLip, int n_rightLip, int n_jaw, int n_neckTilt, int n_neckTwist);
     void SetExpression(QString name);
     void SetExpression(int e);

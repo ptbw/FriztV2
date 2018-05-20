@@ -3,7 +3,7 @@
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "serial.h"
+//#include "serial.h"
 #include <QThread>
 #include <QObject>
 #include <QDebug>
@@ -15,7 +15,8 @@ class Animate : public QObject
 {
     Q_OBJECT
 public:
-    explicit Animate(Serial *serial);
+    //explicit Animate(Serial *serial);
+    explicit Animate();
     void requestWork();
     void abort();    
     void SpeakMessage(QString msg);
@@ -23,7 +24,7 @@ public:
 private:
     bool _working;
     bool _abort;
-    Serial *_serial;
+    //Serial *_serial;
     QMutex mutex;
 
     QStringList text;
