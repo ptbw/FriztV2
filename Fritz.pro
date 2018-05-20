@@ -16,7 +16,6 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     configwindow.cpp \
     aboutbox.cpp \
-    serial.cpp \
     robot.cpp \
     speak.cpp \
     worker.cpp \
@@ -26,7 +25,6 @@ SOURCES += main.cpp\
 HEADERS  += mainwindow.h \
     configwindow.h \
     aboutbox.h \
-    serial.h \
     i.h \
     robot.h \
     speak.h \
