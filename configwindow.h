@@ -7,10 +7,10 @@
 #include <QPixmap>
 
 #include "worker.h"
-//#include "serial.h"
 #include "keyenterreceiver.h"
 
 class Worker;
+class Robot;
 
 namespace Ui {
 class ConfigWindow;
@@ -205,6 +205,7 @@ public:
     static const int ARDUINO_SAVE_SEQUENCE = 34;
 
     //Serial *serial;
+    Robot *robot;
 
 signals:
 
@@ -256,16 +257,16 @@ private:
 
     keyEnterReceiver* key;
 
-    CalibrationData * cd;
+    //CalibrationData * cd;
 
-    RobotState * ss;
+    //RobotState * ss;
 
     int currentValue[32];
     bool currentDirection[32];
     bool currentActive[32];
 
-    int indexToPin[17];
-    int pinToIndex[20];
+//    int indexToPin[17];
+//    int pinToIndex[20];
 
     int tickCount;
     int speed;

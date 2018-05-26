@@ -8,9 +8,9 @@ extern "C" {
 
 #include "robot.h"
 
-#define FREQUENCY 300
+#define FREQUENCY 50
 #define SERVOHATADDR 0x40
-#define SERVOMIN 300
+#define SERVOMIN 500
 
 Robot::Robot()
 {
@@ -21,7 +21,7 @@ Robot::Robot()
     //float irValue = 1000.0f;
     //float sonarValue = 1000.0f;
 
-    cd = new CalibrationData();
+    //cd = new CalibrationData();
 
     //RobotState initState = new RobotState();
 
@@ -39,66 +39,91 @@ Robot::Robot()
 //    neckTilt = f_neckTilt = initState.neckTilt;
 //    neckTwist = f_neckTwist = initState.neckTwist;
 
-     leftHorizontalEyeMin = 100;
-     leftHorizontalEyeMax = 824;
-     leftHorizontalEyePin = 4;
-     leftVerticalEyeMin = -537;
-     leftVerticalEyeMax = -100;
-     leftVerticalEyePin = -5;
-     rightHorizontalEyeMin = -629;
-     rightHorizontalEyeMax = 270;
-     rightHorizontalEyePin = 9;
-     rightVerticalEyeMin = -300;
-     rightVerticalEyeMax = 100;
-     rightVerticalEyePin = 10;
-     leftLipMin = -850;
-     leftLipMax = -54;
-     leftLipPin = 6;
-     rightLipMin = -850;
-     rightLipMax = -50;
-     rightLipPin = 11;
-     jawMin = -240;
-     jawMax = 88;
-     jawPin = 14;
-     neckTiltMin = -100;
-     neckTiltMax = 100;
-     neckTiltPin = 13;
-     neckTwistMin = -750;
-     neckTwistMax = -50;
-     neckTwistPin = 12;
-     leftEyebrowMin = -110;
-     leftEyebrowMax = 292;
-     leftEyebrowPin = 2;
-     rightEyebrowMin = -544;
-     rightEyebrowMax = -104;
-     rightEyebrowPin = 7;
-     leftEyelidMin = -42;
-     leftEyelidMax = 300;
-     leftEyelidPin = 8;
-     rightEyelidMin = 20;
-     rightEyelidMax = 581;
-     rightEyelidPin = 3;
 
-     sonarOutPin = 15;
-     sonarInPin = 16;
+    rightEyebrowMin = 5;
+    rightEyebrowMax = 175;
+    rightEyebrowPin = 12;
 
-     // Prime the distance sensor
-     // GetSonar();
+    leftEyebrowMin = 5;
+    leftEyebrowMax = 175;
+    leftEyebrowPin = 11;
 
-     map_peripheral_BCM2835(&gpio);
-     map_peripheral_BCM2835(&bsc0);
+    rightEyelidMin = 5;
+    rightEyelidMax = 175;
+    rightEyelidPin = 10;
 
-     init_I2C_protocol();
-     init_PCA9685(SERVOHATADDR);
-     set_PWM_frequency_PCA9685(SERVOHATADDR, FREQUENCY);
-     init_angle_to_pulse_length_lookup_table();
-     set_PWM_PCA9685(SERVOHATADDR, 0, 0, SERVOMIN);
-     set_PWM_PCA9685(SERVOHATADDR, 1, 0, SERVOMIN);
+    leftEyelidMin = 5;
+    leftEyelidMax = 175;
+    leftEyelidPin = 9;
+
+    rightHorizontalEyeMin = 5;
+    rightHorizontalEyeMax = 175;
+    rightHorizontalEyePin = 8;
+
+    leftHorizontalEyeMin = 5;
+    leftHorizontalEyeMax = 175;
+    leftHorizontalEyePin = 7;
+
+    leftVerticalEyeMin = 5;
+    leftVerticalEyeMax = 175;
+    leftVerticalEyePin = 6;
+
+    rightVerticalEyeMin = 5;
+    rightVerticalEyeMax = 175;
+    rightVerticalEyePin = 5;
+
+    rightLipMin = 5;
+    rightLipMax = 175;
+    rightLipPin = 4;
+
+    leftLipMin = 5;
+    leftLipMax = 175;
+    leftLipPin = 3;
+
+    jawMin = 5;
+    jawMax = 175;
+    jawPin = 2;
+
+    neckTiltMin = 5;
+    neckTiltMax = 175;
+    neckTiltPin = 1;
+
+    neckTwistMin = 5;
+    neckTwistMax = 175;
+    neckTwistPin = 0;
+
+    sonarOutPin = 15;
+    sonarInPin = 16;
+
+    // Prime the distance sensor
+    // GetSonar();
+
+    map_peripheral_BCM2835(&gpio);
+    map_peripheral_BCM2835(&bsc0);
+
+    init_I2C_protocol();
+    init_PCA9685(SERVOHATADDR);
+    set_PWM_frequency_PCA9685(SERVOHATADDR, FREQUENCY);
+    init_angle_to_pulse_length_lookup_table();
+    set_servo(SERVOHATADDR, 0, FREQUENCY, 90);
+    set_servo(SERVOHATADDR, 1, FREQUENCY, 90);
+    set_servo(SERVOHATADDR, 2, FREQUENCY, 90);
+    set_servo(SERVOHATADDR, 3, FREQUENCY, 90);
+    set_servo(SERVOHATADDR, 4, FREQUENCY, 90);
+    set_servo(SERVOHATADDR, 5, FREQUENCY, 90);
+    set_servo(SERVOHATADDR, 6, FREQUENCY, 90);
+    set_servo(SERVOHATADDR, 7, FREQUENCY, 90);
+    set_servo(SERVOHATADDR, 8, FREQUENCY, 90);
+    set_servo(SERVOHATADDR, 9, FREQUENCY, 90);
+    set_servo(SERVOHATADDR, 10, FREQUENCY, 90);
+    set_servo(SERVOHATADDR, 11, FREQUENCY, 90);
+    set_servo(SERVOHATADDR, 12, FREQUENCY, 90);
+
 }
 
 Robot::~Robot()
 {
-    delete cd;
+    //delete cd;
 }
 
 void Robot::Reset()
@@ -114,14 +139,16 @@ double Robot::GetSonar()
      return sonarValue;
 }
 
-void Robot::SetServo(int pin, int pos)
+void Robot::SetServo(int pin, int angle)
 {
-    set_servo(SERVOHATADDR, pin, FREQUENCY, pos);
+    printf("angle: %d\n",angle);
+    set_servo(SERVOHATADDR, pin, FREQUENCY, angle);
 }
 
 
 void Robot::SetServo( Qt::CheckState state, int min, int max, int pin, int val)
 {
+
     if(val < min)
        val = min;
 
@@ -130,6 +157,7 @@ void Robot::SetServo( Qt::CheckState state, int min, int max, int pin, int val)
 
     if(state == Qt::Checked)
     {
+        printf("Servo: %d, Value: %d", pin, val);
         SetServo(pin, val);
     }
 }
@@ -139,116 +167,117 @@ void Robot::SetMouth(QString shape)
 {
    if(shape == "aaah")
     {
-//        serial->DoTest(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 90 );
-//        serial->DoTest(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 90 );
-//        serial->DoTest(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 50 );
-//        serial->DoTest(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 50 );
-//        serial->DoTest(Qt::Checked, jawMin, jawMax, jawPin, 0);
+        SetServo(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 90 );
+        SetServo(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 90 );
+        SetServo(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 50 );
+        SetServo(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 50 );
+        SetServo(Qt::Checked, jawMin, jawMax, jawPin, 0);
     }
     else if(shape == "oh")
     {
-//        serial->DoTest(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 70 );
-//        serial->DoTest(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 70 );
-//        serial->DoTest(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 10 );
-//        serial->DoTest(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 90 );
-//        serial->DoTest(Qt::Checked, jawMin, jawMax, jawPin, 50);
+        SetServo(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 70 );
+        SetServo(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 70 );
+        SetServo(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 10 );
+        SetServo(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 90 );
+        SetServo(Qt::Checked, jawMin, jawMax, jawPin, 50);
     }
     else if(shape == "aa")
     {
-//        serial->DoTest(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 70 );
-//        serial->DoTest(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 70 );
-//        serial->DoTest(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 10 );
-//        serial->DoTest(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 90 );
-//        serial->DoTest(Qt::Checked, jawMin, jawMax, jawPin, 20);
+        SetServo(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 70 );
+        SetServo(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 70 );
+        SetServo(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 10 );
+        SetServo(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 90 );
+        SetServo(Qt::Checked, jawMin, jawMax, jawPin, 20);
     }
     else if(shape == "i")
     {
-//        serial->DoTest(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 70 );
-//        serial->DoTest(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 70 );
-//        serial->DoTest(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 30 );
-//        serial->DoTest(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 70 );
-//        serial->DoTest(Qt::Checked, jawMin, jawMax, jawPin, 100);
+        SetServo(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 70 );
+        SetServo(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 70 );
+        SetServo(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 30 );
+        SetServo(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 70 );
+        SetServo(Qt::Checked, jawMin, jawMax, jawPin, 100);
     }
     else if(shape == "laa")
     {
-//        serial->DoTest(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 90 );
-//        serial->DoTest(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 90 );
-//        serial->DoTest(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 70 );
-//        serial->DoTest(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 30 );
-//        serial->DoTest(Qt::Checked, jawMin, jawMax, jawPin, 20);
+        SetServo(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 90 );
+        SetServo(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 90 );
+        SetServo(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 70 );
+        SetServo(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 30 );
+        SetServo(Qt::Checked, jawMin, jawMax, jawPin, 20);
     }
     else if(shape == "sss")
     {
-//        serial->DoTest(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 70 );
-//        serial->DoTest(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 70 );
-//        serial->DoTest(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 20 );
-//        serial->DoTest(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 80 );
-//        serial->DoTest(Qt::Checked, jawMin, jawMax, jawPin, 90);
+        SetServo(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 70 );
+        SetServo(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 70 );
+        SetServo(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 20 );
+        SetServo(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 80 );
+        SetServo(Qt::Checked, jawMin, jawMax, jawPin, 90);
     }
     else if(shape == "eee")
     {
-//        serial->DoTest(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 70 );
-//        serial->DoTest(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 70 );
-//        serial->DoTest(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 10 );
-//        serial->DoTest(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 90 );
-//        serial->DoTest(Qt::Checked, jawMin, jawMax, jawPin, 30);
+        SetServo(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 70 );
+        SetServo(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 70 );
+        SetServo(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 10 );
+        SetServo(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 90 );
+        SetServo(Qt::Checked, jawMin, jawMax, jawPin, 30);
     }
     else if(shape == "oh")
     {
-//        serial->DoTest(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 90 );
-//        serial->DoTest(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 90 );
-//        serial->DoTest(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 50 );
-//        serial->DoTest(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 50 );
-//        serial->DoTest(Qt::Checked, jawMin, jawMax, jawPin, 10);
+        SetServo(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 90 );
+        SetServo(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 90 );
+        SetServo(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 50 );
+        SetServo(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 50 );
+        SetServo(Qt::Checked, jawMin, jawMax, jawPin, 10);
     }
     else if(shape == "oooh")
     {
-//        serial->DoTest(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 90 );
-//        serial->DoTest(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 90 );
-//        serial->DoTest(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 20 );
-//        serial->DoTest(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 80 );
-//        serial->DoTest(Qt::Checked, jawMin, jawMax, jawPin, 0);
+        SetServo(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 90 );
+        SetServo(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 90 );
+        SetServo(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 20 );
+        SetServo(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 80 );
+        SetServo(Qt::Checked, jawMin, jawMax, jawPin, 0);
     }
     else if(shape == "fuh")
     {
-//        serial->DoTest(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 90 );
-//        serial->DoTest(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 90 );
-//        serial->DoTest(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 50 );
-//        serial->DoTest(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 50 );
-//        serial->DoTest(Qt::Checked, jawMin, jawMax, jawPin, 90);
+        SetServo(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 90 );
+        SetServo(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 90 );
+        SetServo(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 50 );
+        SetServo(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 50 );
+        SetServo(Qt::Checked, jawMin, jawMax, jawPin, 90);
     }
     else if(shape == "mmm")
     {
-//        serial->DoTest(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 70 );
-//        serial->DoTest(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 70 );
-//        serial->DoTest(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 40 );
-//        serial->DoTest(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 60 );
-//        serial->DoTest(Qt::Checked, jawMin, jawMax, jawPin, 100);
+        SetServo(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 70 );
+        SetServo(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 70 );
+        SetServo(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 40 );
+        SetServo(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 60 );
+        SetServo(Qt::Checked, jawMin, jawMax, jawPin, 100);
     }
     else
     {
-//        serial->DoTest(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 70 );
-//        serial->DoTest(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 70 );
-//        serial->DoTest(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 50 );
-//        serial->DoTest(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 50 );
-//        serial->DoTest(Qt::Checked, jawMin, jawMax, jawPin, 100);
+        SetServo(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 70 );
+        SetServo(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 70 );
+        SetServo(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 50 );
+        SetServo(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 50 );
+        SetServo(Qt::Checked, jawMin, jawMax, jawPin, 100);
     }
 }
 
 void Robot::SetState(int n_leftHorizontalEye, int n_leftVerticalEye, int n_rightHorizontalEye, int n_rightVerticalEye, int n_leftEyebrow, int n_rightEyebrow, int n_rightEyelid, int n_leftEyelid, int n_leftLip, int n_rightLip, int n_jaw, int n_neckTilt, int n_neckTwist)
 {
-//    if (n_leftEyebrow != -1) serial->DoTest(Qt::Checked, leftEyebrowMin, leftEyebrowMax,leftEyebrowPin, n_leftEyebrow );
-//    if (n_rightEyebrow != -1) serial->DoTest(Qt::Checked, rightEyebrowMin, rightEyebrowMax, rightEyebrowPin, n_rightEyebrow );
-//    if (n_leftEyelid != -1) serial->DoTest(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, n_leftEyelid );
-//    if (n_rightEyelid != -1) serial->DoTest(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, n_rightEyelid );
-//    if (n_leftHorizontalEye != -1) serial->DoTest(Qt::Checked, leftHorizontalEyeMin, leftHorizontalEyeMax, leftHorizontalEyePin, n_leftHorizontalEye );
-//    if (n_rightHorizontalEye != -1) serial->DoTest(Qt::Checked, rightHorizontalEyeMin, rightHorizontalEyeMax, rightHorizontalEyePin, n_rightHorizontalEye );
-//    if (n_leftVerticalEye != -1) serial->DoTest(Qt::Checked, leftVerticalEyeMin, leftVerticalEyeMax, leftVerticalEyePin, n_leftVerticalEye );
-//    if (n_rightVerticalEye != -1) serial->DoTest(Qt::Checked, rightVerticalEyeMin, rightVerticalEyeMax, rightVerticalEyePin, n_rightVerticalEye );
-//    if (n_leftLip != -1) serial->DoTest(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, n_leftLip );
-//    if (n_rightLip != -1) serial->DoTest(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, n_rightLip );
-//    if (n_neckTwist != -1) serial->DoTest(Qt::Checked, neckTwistMin, neckTwistMax, neckTwistPin, n_neckTwist );
-//    if (n_jaw != -1) serial->DoTest(Qt::Checked, jawMin, jawMax, jawPin, n_jaw );
+    if (n_leftEyebrow != -1) SetServo(Qt::Checked, leftEyebrowMin, leftEyebrowMax,leftEyebrowPin, n_leftEyebrow );
+    if (n_rightEyebrow != -1) SetServo(Qt::Checked, rightEyebrowMin, rightEyebrowMax, rightEyebrowPin, n_rightEyebrow );
+    if (n_leftEyelid != -1) SetServo(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, n_leftEyelid );
+    if (n_rightEyelid != -1) SetServo(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, n_rightEyelid );
+    if (n_leftHorizontalEye != -1) SetServo(Qt::Checked, leftHorizontalEyeMin, leftHorizontalEyeMax, leftHorizontalEyePin, n_leftHorizontalEye );
+    if (n_rightHorizontalEye != -1) SetServo(Qt::Checked, rightHorizontalEyeMin, rightHorizontalEyeMax, rightHorizontalEyePin, n_rightHorizontalEye );
+    if (n_leftVerticalEye != -1) SetServo(Qt::Checked, leftVerticalEyeMin, leftVerticalEyeMax, leftVerticalEyePin, n_leftVerticalEye );
+    if (n_rightVerticalEye != -1) SetServo(Qt::Checked, rightVerticalEyeMin, rightVerticalEyeMax, rightVerticalEyePin, n_rightVerticalEye );
+    if (n_leftLip != -1) SetServo(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, n_leftLip );
+    if (n_rightLip != -1) SetServo(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, n_rightLip );
+    if (n_neckTwist != -1) SetServo(Qt::Checked, neckTwistMin, neckTwistMax, neckTwistPin, n_neckTwist );
+    if (n_neckTilt != -1) SetServo(Qt::Checked, neckTiltMin, neckTiltMax, neckTiltPin, n_neckTilt );
+    if (n_jaw != -1) SetServo(Qt::Checked, jawMin, jawMax, jawPin, n_jaw );
 }
 
 void Robot::SetExpression(QString name)
@@ -264,7 +293,7 @@ void Robot::SetExpression(QString name)
     else if (name == "Happy")
         SetState(63 /*leftHorizontalEye*/, 56 /*leftVerticalEye*/, 50 /*rightHorizontalEye*/, 56 /*rightVerticalEye*/, 76 /*leftEyebrow*/, 66 /*rightEyebrow*/, 40 /*rightEyelid*/, 40 /*leftEyelid*/, 5 /*leftLip*/, 95 /*rightLip*/, 10 /*jaw*/, 50 /*neckTilt*/, -1 /*neckTwist*/);
     else if (name == "Neutral")
-        SetState(50 /*leftHorizontalEye*/, 50 /*leftVerticalEye*/, 60 /* 50 rightHorizontalEye*/, 10 /* 50 rightVerticalEye*/, 50 /*leftEyebrow*/, 50 /*rightEyebrow*/, 50 /*rightEyelid*/, 50 /*leftEyelid*/, 50 /*leftLip*/, 50 /*rightLip*/, 0 /*jaw*/, 50 /*neckTilt*/, -1 /*neckTwist*/);
+        SetState(90 /*leftHorizontalEye*/, 90 /*leftVerticalEye*/, 90 /* rightHorizontalEye*/, 90 /*rightVerticalEye*/, 90 /*leftEyebrow*/, 90 /*rightEyebrow*/, 90 /*rightEyelid*/, 90 /*leftEyelid*/, 90 /*leftLip*/, 90 /*rightLip*/, 90 /*jaw*/, 90 /*neckTilt*/, 90 /*neckTwist*/);
     else if (name == "Sad")
         SetState(56 /*leftHorizontalEye*/, 64 /*leftVerticalEye*/, 56 /*rightHorizontalEye*/, 64 /*rightVerticalEye*/, 10 /*leftEyebrow*/, 90 /*rightEyebrow*/, 57 /*rightEyelid*/, 57 /*leftEyelid*/, 95 /*leftLip*/, 5 /*rightLip*/, 90 /*jaw*/, 50 /*neckTilt*/, -1 /*neckTwist*/);
     else if (name == "Sinister")
@@ -284,8 +313,7 @@ void Robot::SetExpression(QString name)
     else if (name == "Worried")
         SetState(51 /*leftHorizontalEye*/, 37 /*leftVerticalEye*/, 51 /*rightHorizontalEye*/, 37 /*rightVerticalEye*/, 80 /*leftEyebrow*/, 80 /*rightEyebrow*/, 7 /*rightEyelid*/, 7 /*leftEyelid*/, 18 /*leftLip*/, 81 /*rightLip*/, 50 /*jaw*/, 67 /*neckTilt*/, -1.0 /*neckTwist*/);
     else
-        SetState(50 /*leftHorizontalEye*/, 50 /*leftVerticalEye*/, 60 /* 50 rightHorizontalEye*/, 10 /* 50 rightVerticalEye*/, 50 /*leftEyebrow*/, 50 /*rightEyebrow*/, 50 /*rightEyelid*/, 50 /*leftEyelid*/, 50 /*leftLip*/, 50 /*rightLip*/, 0 /*jaw*/, 50 /*neckTilt*/, -1 /*neckTwist*/);
-
+        SetState(50 /*leftHorizontalEye*/, 90 /*leftVerticalEye*/, 90 /* rightHorizontalEye*/, 90 /*rightVerticalEye*/, 90 /*leftEyebrow*/, 90 /*rightEyebrow*/, 90 /*rightEyelid*/, 90 /*leftEyelid*/, 90 /*leftLip*/, 90 /*rightLip*/, 90 /*jaw*/, 90 /*neckTilt*/, 90 /*neckTwist*/);
 
     //EditState(GetFinalState());
 }
@@ -303,9 +331,9 @@ void Robot::SetExpression(int e)
     else if (e == 4)
         SetState(63 /*leftHorizontalEye*/, 56 /*leftVerticalEye*/, 50 /*rightHorizontalEye*/, 56 /*rightVerticalEye*/, 76 /*leftEyebrow*/, 66 /*rightEyebrow*/, 40 /*rightEyelid*/, 40 /*leftEyelid*/, 5 /*leftLip*/, 95 /*rightLip*/, 10 /*jaw*/, 50 /*neckTilt*/, -1 /*neckTwist*/);
     else if (e ==5)
-        SetState(50 /*leftHorizontalEye*/, 50 /*leftVerticalEye*/, 60 /* 50 rightHorizontalEye*/, 10 /* 50 rightVerticalEye*/, 50 /*leftEyebrow*/, 50 /*rightEyebrow*/, 50 /*rightEyelid*/, 50 /*leftEyelid*/, 50 /*leftLip*/, 50 /*rightLip*/, 0 /*jaw*/, 50 /*neckTilt*/, -1 /*neckTwist*/);
+        SetState(50 /*leftHorizontalEye*/, 50 /*leftVerticalEye*/, 60 /* 50 rightHorizontalEye*/, 10 /* 50 rightVerticalEye*/, 50 /*leftEyebrow*/, 50 /*rightEyebrow*/, 50 /*rightEyelid*/, 50 /*leftEyelid*/, 50 /*leftLip*/, 50 /*rightLip*/, 0 /*jaw*/, 50 /*neckTilt*/, 50/*neckTwist*/);
     else if (e == 6)
-        SetState(56 /*leftHorizontalEye*/, 64 /*leftVerticalEye*/, 56 /*rightHorizontalEye*/, 64 /*rightVerticalEye*/, 10 /*leftEyebrow*/, 90 /*rightEyebrow*/, 57 /*rightEyelid*/, 57 /*leftEyelid*/, 95 /*leftLip*/, 5 /*rightLip*/, 90 /*jaw*/, 50 /*neckTilt*/, -1 /*neckTwist*/);
+        SetState(50 /*leftHorizontalEye*/, 90 /*leftVerticalEye*/, 90 /* rightHorizontalEye*/, 90 /*rightVerticalEye*/, 90 /*leftEyebrow*/, 90 /*rightEyebrow*/, 90 /*rightEyelid*/, 90 /*leftEyelid*/, 90 /*leftLip*/, 90 /*rightLip*/, 90 /*jaw*/, 90 /*neckTilt*/, 90 /*neckTwist*/);
     else if (e == 7)
         SetState(50 /*leftHorizontalEye*/, 44 /*leftVerticalEye*/, 5 /*rightHorizontalEye*/, 44 /*rightVerticalEye*/, 7 /*leftEyebrow*/, 6 /*rightEyebrow*/, 6 /*rightEyelid*/, 6 /*leftEyelid*/, 70 /*leftLip*/, 29 /*rightLip*/, 67 /*jaw*/, 50 /*neckTilt*/, -1.0 /*neckTwist*/);
     else if (e == 8)
@@ -323,7 +351,7 @@ void Robot::SetExpression(int e)
     else if (e == 14)
         SetState(51 /*leftHorizontalEye*/, 37 /*leftVerticalEye*/, 51 /*rightHorizontalEye*/, 37 /*rightVerticalEye*/, 80 /*leftEyebrow*/, 80 /*rightEyebrow*/, 7 /*rightEyelid*/, 7 /*leftEyelid*/, 18 /*leftLip*/, 81 /*rightLip*/, 50 /*jaw*/, 67 /*neckTilt*/, -1.0 /*neckTwist*/);
     else
-        SetState(50 /*leftHorizontalEye*/, 50 /*leftVerticalEye*/, 60 /* 50 rightHorizontalEye*/, 10 /* 50 rightVerticalEye*/, 50 /*leftEyebrow*/, 50 /*rightEyebrow*/, 50 /*rightEyelid*/, 50 /*leftEyelid*/, 50 /*leftLip*/, 50 /*rightLip*/, 0 /*jaw*/, 50 /*neckTilt*/, -1 /*neckTwist*/);
+        SetState(50 /*leftHorizontalEye*/, 90 /*leftVerticalEye*/, 90 /* rightHorizontalEye*/, 90 /*rightVerticalEye*/, 90 /*leftEyebrow*/, 90 /*rightEyebrow*/, 90 /*rightEyelid*/, 90 /*leftEyelid*/, 90 /*leftLip*/, 90 /*rightLip*/, 90 /*jaw*/, 90 /*neckTilt*/, 90 /*neckTwist*/);
 }
 
 void Robot::SetExpression()
@@ -335,22 +363,22 @@ void Robot::SetExpression()
 //SetState(int n_leftHorizontalEye, int n_leftVerticalEye, int n_rightHorizontalEye, int n_rightVerticalEye, int n_leftEyebrow, int n_rightEyebrow, int n_rightEyelid, int n_leftEyelid, int n_leftLip, int n_rightLip, int n_jaw, int n_neckTilt, int n_neckTwist);
 void Robot::SetLeft()
 {
-    SetState(40, -1, 40, -1, 30, 70, 100, 100, 50, 50, 50, -1, 10);
+    SetState(50 /*leftHorizontalEye*/, 50 /*leftVerticalEye*/, 60 /* 50 rightHorizontalEye*/, 10 /* 50 rightVerticalEye*/, 50 /*leftEyebrow*/, 50 /*rightEyebrow*/, 50 /*rightEyelid*/, 50 /*leftEyelid*/, 50 /*leftLip*/, 50 /*rightLip*/, 0 /*jaw*/, 50 /*neckTilt*/, 5/*neckTwist*/);
 }
 
 void Robot::SetCentre()
 {
-    SetState(40, -1, 40, -1, 50, 50, 100, 100, 50, 50, 50, -1, 50);
+    SetState(50 /*leftHorizontalEye*/, 50 /*leftVerticalEye*/, 60 /* 50 rightHorizontalEye*/, 10 /* 50 rightVerticalEye*/, 50 /*leftEyebrow*/, 50 /*rightEyebrow*/, 50 /*rightEyelid*/, 50 /*leftEyelid*/, 50 /*leftLip*/, 50 /*rightLip*/, 0 /*jaw*/, 50 /*neckTilt*/, 90/*neckTwist*/);
 }
 
 void Robot::SetRight()
 {
-    SetState(40, -1, 40, -1, 30, 70, 100, 100, 50, 50, 50, -1, 90);
+    SetState(50 /*leftHorizontalEye*/, 50 /*leftVerticalEye*/, 60 /* 50 rightHorizontalEye*/, 10 /* 50 rightVerticalEye*/, 50 /*leftEyebrow*/, 50 /*rightEyebrow*/, 50 /*rightEyelid*/, 50 /*leftEyelid*/, 50 /*leftLip*/, 50 /*rightLip*/, 0 /*jaw*/, 50 /*neckTilt*/, 175/*neckTwist*/);
 }
 
 void Robot::SetNeck(int angle)
 {
-    SetState(40, -1, 40, -1, 30, 70, 100, 100, 50, 50, 50, -1, angle);
+    SetState(50 /*leftHorizontalEye*/, 50 /*leftVerticalEye*/, 60 /* 50 rightHorizontalEye*/, 10 /* 50 rightVerticalEye*/, 50 /*leftEyebrow*/, 50 /*rightEyebrow*/, 50 /*rightEyelid*/, 50 /*leftEyelid*/, 50 /*leftLip*/, 50 /*rightLip*/, 0 /*jaw*/, 50 /*neckTilt*/, angle/*neckTwist*/);
 }
 
 void Robot::SpeakMessage(QString msg)

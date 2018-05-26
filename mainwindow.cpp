@@ -22,12 +22,12 @@ MainWindow::MainWindow(QWidget *parent) :
     thread = new QThread();
     animate = new Animate();
 
-    animate->moveToThread(thread);
+//    animate->moveToThread(thread);
 
-    connect(animate, SIGNAL(workRequested()), thread, SLOT(start()));
-    connect(thread, SIGNAL(started()), animate, SLOT(doWork()));
-    connect(animate, SIGNAL(done()), this, SLOT(on_Stop()));
-    connect(animate, SIGNAL(finished()), thread, SLOT(quit()), Qt::DirectConnection);
+//    connect(animate, SIGNAL(workRequested()), thread, SLOT(start()));
+//    connect(thread, SIGNAL(started()), animate, SLOT(doWork()));
+//    connect(animate, SIGNAL(done()), this, SLOT(on_Stop()));
+//    connect(animate, SIGNAL(finished()), thread, SLOT(quit()), Qt::DirectConnection);
 
     //Robot robot;
     //robot.SetExpression("Neutral");
@@ -61,7 +61,6 @@ void MainWindow::on_Stop()
 void MainWindow::on_actionConfig_triggered()
 {
     ConfigWindow w;
-    //w.serial = serial;
     w.exec();
 }
 

@@ -17,16 +17,17 @@ CalibrationData::CalibrationData()
 
 ConfigWindow::ConfigWindow(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::ConfigWindow),
-    //serial(new Serial),
-    cd(new CalibrationData),
-    ss(new RobotState)
+    ui(new Ui::ConfigWindow)
+    //cd(new CalibrationData),
+    //ss(new RobotState)
 {
     ui->setupUi(this);
 
     main = parent;
 
     worker = NULL;
+
+    robot = new Robot();
 
 //    arduino = new QSerialPort;
 //    arduino_is_available = true;
@@ -36,61 +37,44 @@ ConfigWindow::ConfigWindow(QWidget *parent) :
     speed = 10;
     tickCount = 0;
 
-    indexToPin[0] = 2;
-    indexToPin[1] = 3;
-    indexToPin[2] = 4;
-    indexToPin[3] = 5;
-    indexToPin[4] = 6;
-    indexToPin[5] = 7;
-    indexToPin[6] = 8;
-    indexToPin[7] = 9;
-    indexToPin[8] = 10;
-    indexToPin[9] = 11;
-    indexToPin[10] = 12;
-    indexToPin[11] = 13;
-    indexToPin[12] = 14;
-    indexToPin[13] = 15;
-    indexToPin[14] = 16;
-    indexToPin[15] = 17;
-    indexToPin[16] = 18;
+//    indexToPin[0] = 2;
+//    indexToPin[1] = 3;
+//    indexToPin[2] = 4;
+//    indexToPin[3] = 5;
+//    indexToPin[4] = 6;
+//    indexToPin[5] = 7;
+//    indexToPin[6] = 8;
+//    indexToPin[7] = 9;
+//    indexToPin[8] = 10;
+//    indexToPin[9] = 11;
+//    indexToPin[10] = 12;
+//    indexToPin[11] = 13;
+//    indexToPin[12] = 14;
+//    indexToPin[13] = 15;
+//    indexToPin[14] = 16;
+//    indexToPin[15] = 17;
+//    indexToPin[16] = 18;
 
-    pinToIndex[0] = -1;
-    pinToIndex[1] = -1;
-    pinToIndex[2] = 0;
-    pinToIndex[3] = 1;
-    pinToIndex[4] = 2;
-    pinToIndex[5] = 3;
-    pinToIndex[6] = 4;
-    pinToIndex[7] = 5;
-    pinToIndex[8] = 6;
-    pinToIndex[9] = 7;
-    pinToIndex[10] = 8;
-    pinToIndex[11] = 9;
-    pinToIndex[12] = 10;
-    pinToIndex[13] = 11;
-    pinToIndex[14] = 12;
-    pinToIndex[15] = 13;
-    pinToIndex[16] = 14;
-    pinToIndex[17] = 15;
-    pinToIndex[18] = 16;
-    pinToIndex[19] = 17;
-
-//    leftEyebrowPin.SelectedIndex=0;
-//    leftEyelidPin.what the kids are using SelectedIndex=1;
-//    leftHorizontalEyePin.SelectedIndex=2;
-//    leftLipPin.SelectedIndex=3;
-//    leftVerticalEyePin.SelectedIndex=4;
-//    rightEyebrowPin.SelectedIndex=5;
-//    rightEyelidPin.SelectedIndex=6;
-//    rightHorizontalEyePin.SelectedIndex=7;
-//    rightLipPin.SelectedIndex=8;
-//    rightVerticalEyePin.SelectedIndex=9;
-//    neckTwistPin.SelectedIndex=10;
-//    neckTiltPin.SelectedIndex = 11;
-//    jawPin.SelectedIndex = 12;void ConfigWindow::SetServo(int pin, int value)
-//    sonarTriggerPin.SelectedIndex = 13;
-//    sonarEchoPin.SelectedIndex = 14;
-//    irPin.SelectedIndex = 15;
+//    pinToIndex[0] = -1;
+//    pinToIndex[1] = -1;
+//    pinToIndex[2] = 0;
+//    pinToIndex[3] = 1;
+//    pinToIndex[4] = 2;
+//    pinToIndex[5] = 3;
+//    pinToIndex[6] = 4;
+//    pinToIndex[7] = 5;
+//    pinToIndex[8] = 6;
+//    pinToIndex[9] = 7;
+//    pinToIndex[10] = 8;
+//    pinToIndex[11] = 9;
+//    pinToIndex[12] = 10;
+//    pinToIndex[13] = 11;
+//    pinToIndex[14] = 12;
+//    pinToIndex[15] = 13;
+//    pinToIndex[16] = 14;
+//    pinToIndex[17] = 15;
+//    pinToIndex[18] = 16;
+//    pinToIndex[19] = 17;
 
     int i;
     for (i = 0; i < 16; i++)
@@ -142,35 +126,34 @@ ConfigWindow::~ConfigWindow()
         worker->abort();
         thread->wait();
     }
-    delete ss;
-    delete cd;
+    //delete ss;
+    //delete cd;
     //delete serial;
+    delete robot;
     delete ui;
     delete key;
 }
 
 void ConfigWindow::ActivateTest(const int val)
 {
-      Robot robot;
-//    serial->DoTest(ui->leftEyebrowTest->checkState(),ui->leftEyebrowMin->text().toInt(), ui->leftEyebrowMax->text().toInt(),ui->leftEyebrowPin->text().toInt(), val );
-//    serial->DoTeotst(ui->rightEyebrowTest->checkState(), ui->rightEyebrowMin->text().toInt(), ui->rightEyebrowMax->text().toInt(), ui->rightEyebrowPin->text().toInt(), val );
-//    serial->DoTest(ui->leftEyelidTest->checkState(), ui->leftEyelidMin->text().toInt(), ui->leftEyelidMax->text().toInt(), ui->leftEyelidPin->text().toInt(), val );
-//    serial->DoTest(ui->rightEyelidTest->checkState(), ui->rightEyelidMin->text().toInt(), ui->rightEyelidMax->text().toInt(), ui->rightEyelidPin->text().toInt(), val );
+    robot->SetServo(ui->leftEyebrowTest->checkState(),ui->leftEyebrowMin->text().toInt(), ui->leftEyebrowMax->text().toInt(),ui->leftEyebrowPin->text().toInt(), val );
+    robot->SetServo(ui->rightEyebrowTest->checkState(), ui->rightEyebrowMin->text().toInt(), ui->rightEyebrowMax->text().toInt(), ui->rightEyebrowPin->text().toInt(), val );
 
-//    serial->DoTest(ui->leftHorizontalEyeTest->checkState(), ui->leftHorizontalEyeMin->text().toInt(), ui->leftHorizontalEyeMax->text().toInt(), ui->leftHorizontalEyePin->text().toInt(), val );
-//    serial->DoTest(ui->rightHorizontalEyeTest->checkState(), ui->rightHorizontalEyeMin->text().toInt(), ui->rightHorizontalEyeMax->text().toInt(), ui->rightHorizontalEyePin->text().toInt(), val );
+    robot->SetServo(ui->leftEyelidTest->checkState(), ui->leftEyelidMin->text().toInt(), ui->leftEyelidMax->text().toInt(), ui->leftEyelidPin->text().toInt(), val );
+    robot->SetServo(ui->rightEyelidTest->checkState(), ui->rightEyelidMin->text().toInt(), ui->rightEyelidMax->text().toInt(), ui->rightEyelidPin->text().toInt(), val );
 
-//    serial->DoTest(ui->leftVerticalEyeTest->checkState(), ui->leftVerticalEyeMin->text().toInt(), ui->leftVerticalEyeMax->text().toInt(), ui->leftVerticalEyePin->text().toInt(), val );
-//    serial->DoTest(ui->rightVerticalEyeTest->checkState(), ui->rightVerticalEyeMin->text().toInt(), ui->rightVerticalEyeMax->text().toInt(), ui->rightVerticalEyePin->text().toInt(), val );
+    robot->SetServo(ui->leftHorizontalEyeTest->checkState(), ui->leftHorizontalEyeMin->text().toInt(), ui->leftHorizontalEyeMax->text().toInt(), ui->leftHorizontalEyePin->text().toInt(), val );
+    robot->SetServo(ui->rightHorizontalEyeTest->checkState(), ui->rightHorizontalEyeMin->text().toInt(), ui->rightHorizontalEyeMax->text().toInt(), ui->rightHorizontalEyePin->text().toInt(), val );
 
-//    serial->DoTest(ui->leftLipTest->checkState(), ui->leftLipMin->text().toInt(), ui->leftLipMax->text().toInt(), ui->leftLipPin->text().toInt(), val );
-//    serial->DoTest(ui->rightLipTest->checkState(), ui->rightLipMin->text().toInt(), ui->rightLipMax->text().toInt(), ui->rightLipPin->text().toInt(), val );
+    robot->SetServo(ui->leftVerticalEyeTest->checkState(), ui->leftVerticalEyeMin->text().toInt(), ui->leftVerticalEyeMax->text().toInt(), ui->leftVerticalEyePin->text().toInt(), val );
+    robot->SetServo(ui->rightVerticalEyeTest->checkState(), ui->rightVerticalEyeMin->text().toInt(), ui->rightVerticalEyeMax->text().toInt(), ui->rightVerticalEyePin->text().toInt(), val );
 
-//    serial->DoTest(ui->twistNeckTest->checkState(), ui->twistNeckMin->text().toInt(), ui->twistNeckMax->text().toInt(), ui->twistNeckPin->text().toInt(), val );
-//    serial->DoTest(ui->jawTest->checkState(), ui->jawMin->text().toInt(), ui->jawMax->text().toInt(), ui->jawPin->text().toInt(), val );
+    robot->SetServo(ui->leftLipTest->checkState(), ui->leftLipMin->text().toInt(), ui->leftLipMax->text().toInt(), ui->leftLipPin->text().toInt(), val );
+    robot->SetServo(ui->rightLipTest->checkState(), ui->rightLipMin->text().toInt(), ui->rightLipMax->text().toInt(), ui->rightLipPin->text().toInt(), val );
 
-      robot.SetServo(ui->twistNeckTest->checkState(), ui->twistNeckMin->text().toInt(), ui->twistNeckMax->text().toInt(), ui->twistNeckPin->text().toInt(), val );
-      robot.SetServo(ui->raiseNeckTest->checkState(), ui->raiseNeckMin->text().toInt(), ui->raiseNeckMax->text().toInt(), ui->raiseNeckPin->text().toInt(), val );
+    robot->SetServo(ui->jawTest->checkState(), ui->jawMin->text().toInt(), ui->jawMax->text().toInt(), ui->jawPin->text().toInt(), val );
+    robot->SetServo(ui->twistNeckTest->checkState(), ui->twistNeckMin->text().toInt(), ui->twistNeckMax->text().toInt(), ui->twistNeckPin->text().toInt(), val );
+    robot->SetServo(ui->raiseNeckTest->checkState(), ui->raiseNeckMin->text().toInt(), ui->raiseNeckMax->text().toInt(), ui->raiseNeckPin->text().toInt(), val );
 }
 
 
@@ -216,13 +199,18 @@ int ConfigWindow::GetVersion()
 }
 
 
-void ConfigWindow::SetServo(int pin, float value, int max, int min, int trim, bool inverted /*= false*/)
+void ConfigWindow::SetServo(int pin, float value, int max, int min, int trim /* = 0 */, bool inverted /*= false*/)
 {
     int val;
-    if (inverted)
-    val = (short)(((1.0f - value) * (max - min)) + min + trim);
+//    if (inverted)
+//        val = (short)(((1.0f - value) * (max - min)) + min + trim);
+//    else
+//        val = (short)((value * (max - min)) + min + trim);
+
+    if(inverted)
+        val = (180 - value) + trim;
     else
-    val = (short)((value * (max - min)) + min + trim);
+        val = value + trim;
 
     if (val > max) val = max;
     if (val < min) val = min;
@@ -233,8 +221,7 @@ void ConfigWindow::SetServo(int pin, float value, int max, int min, int trim, bo
 
 void ConfigWindow::SetServo(int pin, int value)
 {
-    Robot robot;
-    robot.SetServo(pin, value);
+    robot->SetServo(pin, value);
 }
 
 void ConfigWindow::on_btnRunTests_clicked()
@@ -306,15 +293,13 @@ void ConfigWindow::on_btnTestSpeech_5_clicked()
 
 void ConfigWindow::SpeakMessage(QString msg)
 {
-    Robot robot;
-    robot.SpeakMessage(msg);
+    robot->SpeakMessage(msg);
 }
 
 
 void ConfigWindow::on_btnTestSonar_clicked()
 {
-    Robot robot;
-    double distance = robot.GetSonar();
+    double distance = robot->GetSonar();
     QString msg = QString::number(distance);
     ui->textSonar->setText(msg);
 }

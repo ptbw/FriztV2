@@ -61,7 +61,7 @@
     <enum>QFrame::Raised</enum>
    </property>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="layoutWidget_0">
    <property name="geometry">
     <rect>
      <x>30</x>
@@ -81,7 +81,7 @@
     <item>
      <widget class="QLineEdit" name="leftEyebrowMin">
       <property name="text">
-       <string>-110</string>
+       <string>5</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -98,7 +98,7 @@
     <item>
      <widget class="QLineEdit" name="leftEyebrowTrim">
       <property name="text">
-       <string>100</string>
+       <string>90</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -115,7 +115,7 @@
     <item>
      <widget class="QLineEdit" name="leftEyebrowMax">
       <property name="text">
-       <string>292</string>
+       <string>175</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -124,7 +124,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="layoutWidget_1">
    <property name="geometry">
     <rect>
      <x>30</x>
@@ -182,10 +182,6 @@
      </widget>
     </item>
    </layout>
-   <zorder>label_2</zorder>
-   <zorder>label_3</zorder>
-   <zorder>leftEyebrowTest</zorder>
-   <zorder>leftEyebrowPin</zorder>
   </widget>
   <widget class="QPushButton" name="btnRunTests">
    <property name="geometry">
@@ -216,7 +212,7 @@
     <enum>QFrame::Raised</enum>
    </property>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="layoutWidget_2">
    <property name="geometry">
     <rect>
      <x>420</x>
@@ -272,7 +268,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget_2">
+  <widget class="QWidget" name="layoutWidget_3">
    <property name="geometry">
     <rect>
      <x>420</x>
@@ -292,7 +288,7 @@
     <item>
      <widget class="QLineEdit" name="rightEyebrowMin">
       <property name="text">
-       <string>-300</string>
+       <string>5</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -309,7 +305,7 @@
     <item>
      <widget class="QLineEdit" name="rightEyebrowTrim">
       <property name="text">
-       <string>-544</string>
+       <string>90</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -326,7 +322,7 @@
     <item>
      <widget class="QLineEdit" name="rightEyebrowMax">
       <property name="text">
-       <string>-104</string>
+       <string>175</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -419,7 +415,7 @@
     </rect>
    </property>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="layoutWidget_4">
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -453,7 +449,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget_3">
+  <widget class="QWidget" name="layoutWidget_5">
    <property name="geometry">
     <rect>
      <x>30</x>
@@ -473,7 +469,7 @@
     <item>
      <widget class="QLineEdit" name="leftEyelidMin">
       <property name="text">
-       <string>-42</string>
+       <string>5</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -490,7 +486,7 @@
     <item>
      <widget class="QLineEdit" name="leftEyelidTrim">
       <property name="text">
-       <string>0</string>
+       <string>90</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -507,7 +503,7 @@
     <item>
      <widget class="QLineEdit" name="leftEyelidMax">
       <property name="text">
-       <string>300</string>
+       <string>175</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -532,7 +528,7 @@
     <enum>QFrame::Raised</enum>
    </property>
   </widget>
-  <widget class="QWidget" name="layoutWidget_4">
+  <widget class="QWidget" name="layoutWidget_6">
    <property name="geometry">
     <rect>
      <x>30</x>
@@ -588,7 +584,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget_5">
+  <widget class="QWidget" name="layoutWidget_7">
    <property name="geometry">
     <rect>
      <x>30</x>
@@ -608,7 +604,7 @@
     <item>
      <widget class="QLineEdit" name="leftHorizontalEyeMin">
       <property name="text">
-       <string>100</string>
+       <string>5</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -625,7 +621,7 @@
     <item>
      <widget class="QLineEdit" name="leftHorizontalEyeTrim">
       <property name="text">
-       <string>0</string>
+       <string>90</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -642,7 +638,7 @@
     <item>
      <widget class="QLineEdit" name="leftHorizontalEyeMax">
       <property name="text">
-       <string>824</string>
+       <string>175</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -667,7 +663,7 @@
     <enum>QFrame::Raised</enum>
    </property>
   </widget>
-  <widget class="QWidget" name="layoutWidget_6">
+  <widget class="QWidget" name="layoutWidget_8">
    <property name="geometry">
     <rect>
      <x>30</x>
@@ -723,7 +719,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget_7">
+  <widget class="QWidget" name="layoutWidget_9">
    <property name="geometry">
     <rect>
      <x>30</x>
@@ -743,7 +739,7 @@
     <item>
      <widget class="QLineEdit" name="leftVerticalEyeMin">
       <property name="text">
-       <string>-537</string>
+       <string>5</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -760,7 +756,7 @@
     <item>
      <widget class="QLineEdit" name="leftVerticalEyeTrim">
       <property name="text">
-       <string>0</string>
+       <string>90</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -777,7 +773,7 @@
     <item>
      <widget class="QLineEdit" name="leftVerticalEyeMax">
       <property name="text">
-       <string>-100</string>
+       <string>175</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -802,7 +798,7 @@
     <enum>QFrame::Raised</enum>
    </property>
   </widget>
-  <widget class="QWidget" name="layoutWidget_8">
+  <widget class="QWidget" name="layoutWidget_10">
    <property name="geometry">
     <rect>
      <x>30</x>
@@ -858,7 +854,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget_9">
+  <widget class="QWidget" name="layoutWidget_11">
    <property name="geometry">
     <rect>
      <x>30</x>
@@ -878,7 +874,7 @@
     <item>
      <widget class="QLineEdit" name="leftLipMin">
       <property name="text">
-       <string>-850</string>
+       <string>5</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -895,7 +891,7 @@
     <item>
      <widget class="QLineEdit" name="leftLipTrim">
       <property name="text">
-       <string>0</string>
+       <string>90</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -912,7 +908,7 @@
     <item>
      <widget class="QLineEdit" name="leftLipMax">
       <property name="text">
-       <string>-54</string>
+       <string>175</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -937,7 +933,7 @@
     <enum>QFrame::Raised</enum>
    </property>
   </widget>
-  <widget class="QWidget" name="layoutWidget_10">
+  <widget class="QWidget" name="layoutWidget_12">
    <property name="geometry">
     <rect>
      <x>30</x>
@@ -993,7 +989,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget_11">
+  <widget class="QWidget" name="layoutWidget_13">
    <property name="geometry">
     <rect>
      <x>30</x>
@@ -1072,7 +1068,7 @@
     <enum>QFrame::Raised</enum>
    </property>
   </widget>
-  <widget class="QWidget" name="layoutWidget_12">
+  <widget class="QWidget" name="layoutWidget_14">
    <property name="geometry">
     <rect>
      <x>30</x>
@@ -1128,7 +1124,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget_13">
+  <widget class="QWidget" name="layoutWidget_15">
    <property name="geometry">
     <rect>
      <x>420</x>
@@ -1148,7 +1144,7 @@
     <item>
      <widget class="QLineEdit" name="rightEyelidMin">
       <property name="text">
-       <string>20</string>
+       <string>5</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1165,7 +1161,7 @@
     <item>
      <widget class="QLineEdit" name="rightEyelidTrim">
       <property name="text">
-       <string>0</string>
+       <string>90</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1182,7 +1178,7 @@
     <item>
      <widget class="QLineEdit" name="rightEyelidMax">
       <property name="text">
-       <string>581</string>
+       <string>175</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1207,7 +1203,7 @@
     <enum>QFrame::Raised</enum>
    </property>
   </widget>
-  <widget class="QWidget" name="layoutWidget_14">
+  <widget class="QWidget" name="layoutWidget_16">
    <property name="geometry">
     <rect>
      <x>420</x>
@@ -1263,7 +1259,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget_15">
+  <widget class="QWidget" name="layoutWidget_17">
    <property name="geometry">
     <rect>
      <x>420</x>
@@ -1283,7 +1279,7 @@
     <item>
      <widget class="QLineEdit" name="rightHorizontalEyeMin">
       <property name="text">
-       <string>-629</string>
+       <string>5</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1300,7 +1296,7 @@
     <item>
      <widget class="QLineEdit" name="rightHorizontalTrim">
       <property name="text">
-       <string>0</string>
+       <string>90</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1308,9 +1304,16 @@
      </widget>
     </item>
     <item>
+     <widget class="QLabel" name="label_44">
+      <property name="text">
+       <string>Max:</string>
+      </property>
+     </widget>
+    </item>
+    <item>
      <widget class="QLineEdit" name="rightHorizontalEyeMax">
       <property name="text">
-       <string>270</string>
+       <string>175</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1335,7 +1338,7 @@
     <enum>QFrame::Raised</enum>
    </property>
   </widget>
-  <widget class="QWidget" name="layoutWidget_16">
+  <widget class="QWidget" name="layoutWidget_18">
    <property name="geometry">
     <rect>
      <x>420</x>
@@ -1345,13 +1348,6 @@
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_19">
-    <item>
-     <widget class="QLabel" name="label_44">
-      <property name="text">
-       <string>Max:</string>
-      </property>
-     </widget>
-    </item>
     <item>
      <widget class="QLabel" name="label_45">
       <property name="text">
@@ -1398,7 +1394,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget_17">
+  <widget class="QWidget" name="layoutWidget_19">
    <property name="geometry">
     <rect>
      <x>420</x>
@@ -1418,7 +1414,7 @@
     <item>
      <widget class="QLineEdit" name="rightVerticalEyeMin">
       <property name="text">
-       <string>-300</string>
+       <string>5</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1435,7 +1431,7 @@
     <item>
      <widget class="QLineEdit" name="rightVerticalEyeTrim">
       <property name="text">
-       <string>0</string>
+       <string>90</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1452,7 +1448,7 @@
     <item>
      <widget class="QLineEdit" name="rightVerticalEyeMax">
       <property name="text">
-       <string>100</string>
+       <string>175</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1477,7 +1473,7 @@
     <enum>QFrame::Raised</enum>
    </property>
   </widget>
-  <widget class="QWidget" name="layoutWidget_18">
+  <widget class="QWidget" name="layoutWidget_20">
    <property name="geometry">
     <rect>
      <x>420</x>
@@ -1533,7 +1529,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget_19">
+  <widget class="QWidget" name="layoutWidget_21">
    <property name="geometry">
     <rect>
      <x>420</x>
@@ -1553,7 +1549,7 @@
     <item>
      <widget class="QLineEdit" name="rightLipMin">
       <property name="text">
-       <string>-850</string>
+       <string>5</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1570,7 +1566,7 @@
     <item>
      <widget class="QLineEdit" name="rightLipTrim">
       <property name="text">
-       <string>0</string>
+       <string>90</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1587,7 +1583,7 @@
     <item>
      <widget class="QLineEdit" name="rightLipMax">
       <property name="text">
-       <string>-50</string>
+       <string>175</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1612,7 +1608,7 @@
     <enum>QFrame::Raised</enum>
    </property>
   </widget>
-  <widget class="QWidget" name="layoutWidget_20">
+  <widget class="QWidget" name="layoutWidget_22">
    <property name="geometry">
     <rect>
      <x>420</x>
@@ -1668,7 +1664,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget_21">
+  <widget class="QWidget" name="layoutWidget_23">
    <property name="geometry">
     <rect>
      <x>420</x>
@@ -1688,7 +1684,7 @@
     <item>
      <widget class="QLineEdit" name="jawMin">
       <property name="text">
-       <string>-240</string>
+       <string>5</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1705,7 +1701,7 @@
     <item>
      <widget class="QLineEdit" name="jawTrim">
       <property name="text">
-       <string>0</string>
+       <string>90</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1722,7 +1718,7 @@
     <item>
      <widget class="QLineEdit" name="jawMax">
       <property name="text">
-       <string>88</string>
+       <string>175</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1747,7 +1743,7 @@
     <enum>QFrame::Raised</enum>
    </property>
   </widget>
-  <widget class="QWidget" name="layoutWidget_22">
+  <widget class="QWidget" name="layoutWidget_24">
    <property name="geometry">
     <rect>
      <x>420</x>
@@ -1854,7 +1850,7 @@
     <bool>true</bool>
    </property>
   </widget>
-  <widget class="QWidget" name="layoutWidget_23">
+  <widget class="QWidget" name="layoutWidget_25">
    <property name="geometry">
     <rect>
      <x>30</x>
@@ -1917,7 +1913,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget_24">
+  <widget class="QWidget" name="layoutWidget_26">
    <property name="geometry">
     <rect>
      <x>30</x>
@@ -2004,18 +2000,16 @@
   <zorder>frame_9</zorder>
   <zorder>btnCancelSave</zorder>
   <zorder>pushButton</zorder>
-  <zorder>layoutWidget</zorder>
-  <zorder>layoutWidget</zorder>
   <zorder>btnRunTests</zorder>
-  <zorder>layoutWidget</zorder>
-  <zorder>layoutWidget_2</zorder>
   <zorder>btnTestSpeech</zorder>
   <zorder>btnTestSpeech_2</zorder>
   <zorder>btnTestSpeech_3</zorder>
   <zorder>btnTestSpeech_4</zorder>
   <zorder>lblPicture</zorder>
   <zorder>textToSay</zorder>
-  <zorder>layoutWidget</zorder>
+  <zorder>layoutWidget_0</zorder>
+  <zorder>layoutWidget_1</zorder>
+  <zorder>layoutWidget_2</zorder>
   <zorder>layoutWidget_3</zorder>
   <zorder>layoutWidget_4</zorder>
   <zorder>layoutWidget_5</zorder>
@@ -2036,11 +2030,13 @@
   <zorder>layoutWidget_20</zorder>
   <zorder>layoutWidget_21</zorder>
   <zorder>layoutWidget_22</zorder>
+  <zorder>layoutWidget_23</zorder>
+  <zorder>layoutWidget_24</zorder>
+  <zorder>layoutWidget_25</zorder>
+  <zorder>layoutWidget_26</zorder>
   <zorder>btnTestSpeech_5</zorder>
   <zorder>textSonar</zorder>
   <zorder>btnTestSonar</zorder>
-  <zorder>layoutWidget_23</zorder>
-  <zorder>layoutWidget_24</zorder>
  </widget>
  <tabstops>
   <tabstop>comboBox</tabstop>

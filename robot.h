@@ -88,7 +88,7 @@ private:
     int irValue;
     double sonarValue;
 
-    CalibrationData * cd;
+    //CalibrationData * cd;
 
     //Serial * serial;
 
