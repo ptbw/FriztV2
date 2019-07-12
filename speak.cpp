@@ -139,7 +139,7 @@
 
  QStringList Speak::TextToPhon(QString text)
  {
-     QString command = "espeak -s120 -k20 -ven-uk-rp -q --ipa=3 ";
+     QString command = "espeak -s160 -k20 -ven-uk-rp -q --ipa=3 ";
      command.append('"').append(text).append('"');
 
      QProcess process;
@@ -154,8 +154,12 @@
 
 int Speak::TextToSpeech(QString text)
 {
-    QString command = "espeak -s120 -k20 -ven-uk-rp "; // was 130
-    command.append('"').append(text).append('"');
+    TextToWave(text);
+    PlayWave();
+    return 0;
+
+    QString command = "espeak -s130 -k20 -ven-uk-rp --stdout  ";
+    command.append('"').append(text).append('"').append(" | aplay");
 
     QProcess process;
     process.startDetached(command);

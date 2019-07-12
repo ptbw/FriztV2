@@ -8,12 +8,13 @@ extern "C" {
 
 #include "robot.h"
 
-#define FREQUENCY 50
+#define FREQUENCY 60
 #define SERVOHATADDR 0x40
 #define SERVOMIN 500
 
 Robot::Robot()
 {
+    //int servo_min = 500;  // Min pulse length out of 4096
 
     //const int minPin = 0;
     //const int maxPin = 11;
@@ -39,57 +40,94 @@ Robot::Robot()
 //    neckTilt = f_neckTilt = initState.neckTilt;
 //    neckTwist = f_neckTwist = initState.neckTwist;
 
+    // Twist 0  	35 - 165
+    // Neck 1  		80 - 100
+    // Chin 2  		60 - 80
+    // RLip 3  		30 - 120
+    // LLip 4  		30 - 120
+    // VLEye 5 		30 - 100
+    // VREye 6 		30 - 100
+    // HLEye 7 		30 - 100
+    // HREye 8 		30 - 100
+    // LEyelid 9 	40 - 90
+    // REyelid 10  	40 - 90
+    // LEyebrow 11 	30 - 100
+    // REyebrow 12  30 - 100
 
-    rightEyebrowMin = 5;
-    rightEyebrowMax = 175;
+    rightEyebrowMin = 30;
+    rightEyebrowMax = 100;
+    rightEyebrowMid = ((rightEyebrowMax - rightEyebrowMin)/2) + rightEyebrowMin;
     rightEyebrowPin = 12;
 
-    leftEyebrowMin = 5;
-    leftEyebrowMax = 175;
+    leftEyebrowMin = 30;
+    leftEyebrowMax = 100;
+    leftEyebrowMid = ((leftEyebrowMax - leftEyebrowMin)/2) + leftEyebrowMin;
     leftEyebrowPin = 11;
+    
 
-    rightEyelidMin = 5;
-    rightEyelidMax = 175;
+    rightEyelidMin = 40;
+    rightEyelidMax = 90;
+    rightEyelidMid = ((rightEyelidMax - rightEyelidMin)/2) + rightEyelidMin;
     rightEyelidPin = 10;
 
-    leftEyelidMin = 5;
-    leftEyelidMax = 175;
+
+    leftEyelidMin = 40;
+    leftEyelidMax = 90;
+    leftEyelidMid = ((leftEyelidMax - leftEyelidMin)/2) + leftEyelidMin;
     leftEyelidPin = 9;
 
-    rightHorizontalEyeMin = 5;
-    rightHorizontalEyeMax = 175;
+    rightHorizontalEyeMin = 30;
+    rightHorizontalEyeMax = 100;
+    rightHorizontalEyeMid = ((rightHorizontalEyeMax - rightHorizontalEyeMin)/2) + rightHorizontalEyeMin;
     rightHorizontalEyePin = 8;
 
-    leftHorizontalEyeMin = 5;
-    leftHorizontalEyeMax = 175;
+    leftHorizontalEyeMin = 30;
+    leftHorizontalEyeMax = 100;
+    leftHorizontalEyeMid = ((leftHorizontalEyeMax - leftHorizontalEyeMin)/2) + leftHorizontalEyeMin;
     leftHorizontalEyePin = 7;
+    
+    
+    // RLip 3  		30 - 120
+    // LLip 4  		30 - 120
+    // VLEye 5 		30 - 100
+    // VREye 6 		30 - 100
 
-    leftVerticalEyeMin = 5;
-    leftVerticalEyeMax = 175;
+    leftVerticalEyeMin = 30;
+    leftVerticalEyeMax = 100;
+    leftVerticalEyeMid = ((leftVerticalEyeMax - leftVerticalEyeMin)/2) + leftVerticalEyeMin;
     leftVerticalEyePin = 6;
 
-    rightVerticalEyeMin = 5;
-    rightVerticalEyeMax = 175;
+    rightVerticalEyeMin = 30;
+    rightVerticalEyeMax = 100;
+    rightVerticalEyeMid = ((rightVerticalEyeMax - rightVerticalEyeMin)/2) + rightVerticalEyeMin;
     rightVerticalEyePin = 5;
 
-    rightLipMin = 5;
-    rightLipMax = 175;
+    rightLipMin = 30;
+    rightLipMax = 120;
+    rightLipMid = ((rightLipMax - rightLipMin)/2) + rightLipMin;
     rightLipPin = 4;
 
-    leftLipMin = 5;
-    leftLipMax = 175;
+    leftLipMin = 30;
+    leftLipMax = 120;
+    leftLipMid = ((leftLipMax - leftLipMin)/2) + leftLipMin;
     leftLipPin = 3;
 
-    jawMin = 5;
-    jawMax = 175;
+	// Twist 0  	35 - 165
+    // Neck 1  		80 - 100
+    // Chin 2  		60 - 80
+    jawMin = 60;
+    jawMax = 80;
+    jawMid = ((jawMax - jawMin)/2) + jawMin;
     jawPin = 2;
 
-    neckTiltMin = 5;
-    neckTiltMax = 175;
+    neckTiltMin = 80;
+    neckTiltMax = 100;
+    neckTiltMid = ((neckTiltMax - neckTiltMin)/2) + neckTiltMin;
     neckTiltPin = 1;
 
-    neckTwistMin = 5;
-    neckTwistMax = 175;
+    neckTwistMin = 35;
+    neckTwistMax = 165;
+    neckTwistMid = ((neckTwistMax - neckTwistMin)/2) + neckTwistMin;
     neckTwistPin = 0;
 
     sonarOutPin = 15;
@@ -105,19 +143,20 @@ Robot::Robot()
     init_PCA9685(SERVOHATADDR);
     set_PWM_frequency_PCA9685(SERVOHATADDR, FREQUENCY);
     init_angle_to_pulse_length_lookup_table();
-    set_servo(SERVOHATADDR, 0, FREQUENCY, 90);
-    set_servo(SERVOHATADDR, 1, FREQUENCY, 90);
-    set_servo(SERVOHATADDR, 2, FREQUENCY, 90);
-    set_servo(SERVOHATADDR, 3, FREQUENCY, 90);
-    set_servo(SERVOHATADDR, 4, FREQUENCY, 90);
-    set_servo(SERVOHATADDR, 5, FREQUENCY, 90);
-    set_servo(SERVOHATADDR, 6, FREQUENCY, 90);
-    set_servo(SERVOHATADDR, 7, FREQUENCY, 90);
-    set_servo(SERVOHATADDR, 8, FREQUENCY, 90);
-    set_servo(SERVOHATADDR, 9, FREQUENCY, 90);
-    set_servo(SERVOHATADDR, 10, FREQUENCY, 90);
-    set_servo(SERVOHATADDR, 11, FREQUENCY, 90);
-    set_servo(SERVOHATADDR, 12, FREQUENCY, 90);
+
+    set_servo(SERVOHATADDR, neckTwistPin, FREQUENCY, neckTwistMid);
+    set_servo(SERVOHATADDR, neckTiltPin, FREQUENCY, neckTiltMid);
+    set_servo(SERVOHATADDR, jawPin, FREQUENCY, jawMid);
+    set_servo(SERVOHATADDR, leftLipPin, FREQUENCY, leftLipMid);
+    set_servo(SERVOHATADDR, rightLipPin, FREQUENCY, rightLipMid);
+    set_servo(SERVOHATADDR, leftVerticalEyePin, FREQUENCY, leftVerticalEyeMid);
+    set_servo(SERVOHATADDR, rightVerticalEyePin, FREQUENCY, rightVerticalEyeMid);
+    set_servo(SERVOHATADDR, leftHorizontalEyePin, FREQUENCY, leftHorizontalEyeMid);
+    set_servo(SERVOHATADDR, rightHorizontalEyePin, FREQUENCY, rightHorizontalEyeMid);
+    set_servo(SERVOHATADDR, leftEyelidPin, FREQUENCY, leftEyelidMid);
+    set_servo(SERVOHATADDR, rightEyelidPin, FREQUENCY, rightEyelidMid);
+    set_servo(SERVOHATADDR, leftEyebrowPin, FREQUENCY, leftEyebrowMid);
+    set_servo(SERVOHATADDR, rightEyebrowPin, FREQUENCY, rightEyebrowMid);
 
 }
 
@@ -145,21 +184,35 @@ void Robot::SetServo(int pin, int angle)
     set_servo(SERVOHATADDR, pin, FREQUENCY, angle);
 }
 
+void Robot::ResetServo(int pin, int angle)
+{
+    set_servo(SERVOHATADDR, pin, 0, angle);
+}
+
+void Robot::ResetServo(int pin)
+{
+    set_servo(SERVOHATADDR, pin, 0, 10);
+}
+
+void Robot::ResetServo()
+{
+    for(int pin = 0 ;pin < 16; pin++)
+       ResetServo(pin);
+}
 
 void Robot::SetServo( Qt::CheckState state, int min, int max, int pin, int val)
 {
-
-    if(val < min)
-       val = min;
-
-    if(val > max)
-        val = max;
+    if(val < min || val > max || state != Qt::Checked)
+    {
+       ResetServo(pin, val < min ? min : max);
+       return;
+    }
 
     if(state == Qt::Checked)
     {
         printf("Servo: %d, Value: %d", pin, val);
         SetServo(pin, val);
-    }
+    }    
 }
 
 
@@ -383,22 +436,22 @@ void Robot::SetNeck(int angle)
 
 void Robot::SpeakMessage(QString msg)
 {
-    SpeakWord(msg);
-    return;
+    //SpeakWord(msg);
+    //return;
 
-//    QStringList words = msg.split(",",QString::SkipEmptyParts);
-//    QStringListIterator iterator(words);
-//    while (iterator.hasNext())
-//    {
-//       SpeakWord(iterator.next());
-//       I::msleep(100);
-//    }
+    QStringList words = msg.split(QRegExp("[,.]"),QString::SkipEmptyParts);
+    QStringListIterator iterator(words);
+    while (iterator.hasNext())
+    {
+       SpeakWord(iterator.next());
+       I::msleep(100);
+    }
 }
 
 void Robot::SpeakWord(QString msg)
 {
     Speak speak;
-    Robot robot;
+    //Robot robot;
 
     QStringList phons = speak.TextToPhon(msg);
     speak.TextToSpeech(msg);
@@ -407,7 +460,8 @@ void Robot::SpeakWord(QString msg)
     while (iterator.hasNext())
     {
         QString shape = speak.GetMouthShape(iterator.next());
-        robot.SetMouth(shape);
+        //robot.SetMouth(shape);
+        SetMouth(shape);
         I::msleep(60);
     }
 }

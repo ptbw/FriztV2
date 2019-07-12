@@ -77,6 +77,9 @@ void MainWindow::on_actionSave_triggered()
 
 void MainWindow::on_actionQuit_triggered()
 {
+    Robot robot;
+    robot.ResetServo();
+
     if(animationRunning)
     {
         ui->btnAnimate->setText("Animate");
@@ -101,7 +104,7 @@ void MainWindow::SpeakMessage(QString msg)
 
 void MainWindow::on_btnHello_clicked()
 {
-    QString msg = "Hello  My Name is Fritz";
+    QString msg = "Hello,  My Name is Fritz";
     SpeakMessage(msg);
 }
 

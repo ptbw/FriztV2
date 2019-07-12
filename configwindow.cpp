@@ -36,45 +36,60 @@ ConfigWindow::ConfigWindow(QWidget *parent) :
 
     speed = 10;
     tickCount = 0;
+    
+    ui->leftHorizontalEyeMin->setText(QString::number(robot->leftHorizontalEyeMin));
+    ui->leftHorizontalEyeMax->setText(QString::number(robot->leftHorizontalEyeMax));
+    //ui->leftHorizontalEyeTrim->setText(QString::number(robot->leftHorizontalEyeMid));
+    //ui->leftHorizontalEyePin->setText(QString::number(robot->leftHorizontalEyePin));
+    ui->leftVerticalEyeMin->setText(QString::number(robot->leftVerticalEyeMin));
+    ui->leftVerticalEyeMax->setText(QString::number(robot->leftVerticalEyeMax));
+    //ui->leftVerticalEyeTrim->setText(QString::number(robot->leftVerticalEyeMid));
+    //ui->leftVerticalEyePin->setText(QString::number(robot->leftVerticalEyePin));
+    ui->rightHorizontalEyeMin->setText(QString::number(robot->rightHorizontalEyeMin));
+    ui->rightHorizontalEyeMax->setText(QString::number(robot->rightHorizontalEyeMax));
+    //ui->rightHorizontalEyeTrim->setText(QString::number(robot->rightHorizontalEyeMid));
+    //ui->rightHorizontalEyePin->setText(QString::number(robot->rightHorizontalEyePin));
+    ui->rightVerticalEyeMin->setText(QString::number(robot->leftEyebrowMin));
+    ui->rightVerticalEyeMax->setText(QString::number(robot->rightVerticalEyeMax));
+    //ui->rightVerticalEyeTrim->setText(QString::number(robot->rightVerticalEyeMid));
+    //ui->rightVerticalEyePin->setText(QString::number(robot->rightVerticalEyePin));
+    ui->leftLipMin->setText(QString::number(robot->leftLipMin));
+    ui->leftLipMax->setText(QString::number(robot->leftLipMax));
+    //ui->leftLipTrim->setText(QString::number(robot->leftLipMid));
+    //ui->leftLipPin->setText(QString::number(robot->leftLipPin));
+    ui->rightLipMin->setText(QString::number(robot->rightLipMin));
+    ui->rightLipMax->setText(QString::number(robot->rightLipMax));
+    //ui->rightLipTrim->setText(QString::number(robot->rightLipMid));
+    //ui->rightLipPin->setText(QString::number(robot->rightLipPin));
+    ui->jawMin->setText(QString::number(robot->jawMin));
+    ui->jawMax->setText(QString::number(robot->jawMax));
+    //ui->jawTrim->setText(QString::number(robot->jawMid));
+    //ui->jawPin->setText(QString::number(robot->jawPin));
+    ui->raiseNeckMin->setText(QString::number(robot->neckTiltMin));
+    ui->raiseNeckMax->setText(QString::number(robot->neckTiltMax));
+    //ui->neckTiltTrim->setText(QString::number(robot->neckTiltMid));
+    //ui->neckTiltPin->setText(QString::number(robot->neckTiltPin));
+    ui->twistNeckMin->setText(QString::number(robot->neckTwistMin));
+    ui->twistNeckMax->setText(QString::number(robot->neckTwistMax));
+    //ui->neckTwistTrim->setText(QString::number(robot->neckTwistMid));
+    //ui->neckTwistPin->setText(QString::number(robot->neckTwistPin));
+    ui->leftEyebrowMin->setText(QString::number(robot->leftEyebrowMin));
+    ui->leftEyebrowMax->setText(QString::number(robot->leftEyebrowMax));
+    ui->leftEyebrowTrim->setText(QString::number(robot->leftEyebrowMid));
+    //ui->leftEyebrowPin->setText(QString::number(robot->leftEyebrowMin));
+    ui->rightEyebrowMin->setText(QString::number(robot->rightEyebrowMin));
+    ui->rightEyebrowMax->setText(QString::number(robot->rightEyebrowMax));
+    //ui->rightEyebrowTrim->setText(QString::number(robot->rightEyebrowMid));
+    //ui->rightEyebrowPin->setText(QString::number(robot->rightEyebrowPin));
+    ui->leftEyelidMin->setText(QString::number(robot->leftEyelidMin));
+    ui->leftEyelidMax->setText(QString::number(robot->leftEyelidMax));
+    //ui->leftEyelidTrim->setText(QString::number(robot->leftEyelidMid));
+    //ui->leftEyelidPin->setText(QString::number(robot->leftEyelidPin));
+    ui->rightEyelidMin->setText(QString::number(robot->rightEyelidMin));
+    ui->rightEyelidMax->setText(QString::number(robot->rightEyelidMax));
+    //ui->rightEyelidTrim->setText(QString::number(robot->rightEyelidMid));
+    //ui->rightEyelidPin->setText(QString::number(robot->rightEyelidPin));
 
-//    indexToPin[0] = 2;
-//    indexToPin[1] = 3;
-//    indexToPin[2] = 4;
-//    indexToPin[3] = 5;
-//    indexToPin[4] = 6;
-//    indexToPin[5] = 7;
-//    indexToPin[6] = 8;
-//    indexToPin[7] = 9;
-//    indexToPin[8] = 10;
-//    indexToPin[9] = 11;
-//    indexToPin[10] = 12;
-//    indexToPin[11] = 13;
-//    indexToPin[12] = 14;
-//    indexToPin[13] = 15;
-//    indexToPin[14] = 16;
-//    indexToPin[15] = 17;
-//    indexToPin[16] = 18;
-
-//    pinToIndex[0] = -1;
-//    pinToIndex[1] = -1;
-//    pinToIndex[2] = 0;
-//    pinToIndex[3] = 1;
-//    pinToIndex[4] = 2;
-//    pinToIndex[5] = 3;
-//    pinToIndex[6] = 4;
-//    pinToIndex[7] = 5;
-//    pinToIndex[8] = 6;
-//    pinToIndex[9] = 7;
-//    pinToIndex[10] = 8;
-//    pinToIndex[11] = 9;
-//    pinToIndex[12] = 10;
-//    pinToIndex[13] = 11;
-//    pinToIndex[14] = 12;
-//    pinToIndex[15] = 13;
-//    pinToIndex[16] = 14;
-//    pinToIndex[17] = 15;
-//    pinToIndex[18] = 16;
-//    pinToIndex[19] = 17;
 
     int i;
     for (i = 0; i < 16; i++)
@@ -103,6 +118,7 @@ ConfigWindow::ConfigWindow(QWidget *parent) :
     connect(worker, SIGNAL(finished()), thread, SLOT(quit()), Qt::DirectConnection);
     //connect(worker, SIGNAL(finished()), this, SLOT(DeactivateTest));
 
+    robot->ResetServo();
 }
 
 void ConfigWindow::fetchImage(QString filename)
@@ -162,6 +178,7 @@ void ConfigWindow::DeactivateTest()
     worker->abort();
     thread->wait(); // If the thread is not running, this will immediately return.
     ui->btnRunTests->setText("Run Tests");
+    robot->ResetServo();
 }
 
 void ConfigWindow::on_btnCancelSave_accepted()
@@ -231,6 +248,7 @@ void ConfigWindow::on_btnRunTests_clicked()
         worker->abort();
         thread->wait();
         ui->btnRunTests->setText("Run Tests");
+        robot->ResetServo();
     }
     else
     {

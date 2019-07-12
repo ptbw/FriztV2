@@ -41,48 +41,8 @@ private:
     float f_jaw;
     float f_neckTilt;
     float f_neckTwist;
-
-    int leftHorizontalEyeMin;
-    int leftHorizontalEyeMax;
-    int leftHorizontalEyePin;
-    int leftVerticalEyeMin;
-    int leftVerticalEyeMax;
-    int leftVerticalEyePin;
-    int rightHorizontalEyeMin;
-    int rightHorizontalEyeMax;
-    int rightHorizontalEyePin;
-    int rightVerticalEyeMin;
-    int rightVerticalEyeMax;
-    int rightVerticalEyePin;
-    int leftLipMin;
-    int leftLipMax;
-    int leftLipPin;
-    int rightLipMin;
-    int rightLipMax;
-    int rightLipPin;
-    int jawMin;
-    int jawMax;
-    int jawPin;
-    int neckTiltMin;
-    int neckTiltMax;
-    int neckTiltPin;
-    int neckTwistMin;
-    int neckTwistMax;
-    int neckTwistPin;
-    int leftEyebrowMin;
-    int leftEyebrowMax;
-    int leftEyebrowPin;
-    int rightEyebrowMin;
-    int rightEyebrowMax;
-    int rightEyebrowPin;
-    int leftEyelidMin;
-    int leftEyelidMax;
-    int leftEyelidPin;
-    int rightEyelidMin;
-    int rightEyelidMax;
-    int rightEyelidPin;
-
-    int sonarOutPin;
+    
+	int sonarOutPin;
     int sonarInPin;
 
     int irValue;
@@ -92,8 +52,61 @@ private:
 
     //Serial * serial;
 
-
 public:
+    int leftHorizontalEyeMin;
+    int leftHorizontalEyeMax;
+    int leftHorizontalEyeMid;
+    int leftHorizontalEyePin;
+    int leftVerticalEyeMin;
+    int leftVerticalEyeMax;
+    int leftVerticalEyeMid;
+    int leftVerticalEyePin;
+    int rightHorizontalEyeMin;
+    int rightHorizontalEyeMax;
+    int rightHorizontalEyeMid;
+    int rightHorizontalEyePin;
+    int rightVerticalEyeMin;
+    int rightVerticalEyeMax;
+    int rightVerticalEyeMid;
+    int rightVerticalEyePin;
+    int leftLipMin;
+    int leftLipMax;
+    int leftLipMid;
+    int leftLipPin;
+    int rightLipMin;
+    int rightLipMax;
+    int rightLipMid;
+    int rightLipPin;
+    int jawMin;
+    int jawMax;
+    int jawMid;
+    int jawPin;
+    int neckTiltMin;
+    int neckTiltMax;
+    int neckTiltMid;
+    int neckTiltPin;
+    int neckTwistMin;
+    int neckTwistMax;
+    int neckTwistMid;
+    int neckTwistPin;
+    int leftEyebrowMin;
+    int leftEyebrowMax;
+    int leftEyebrowMid;
+    int leftEyebrowPin;
+    int rightEyebrowMin;
+    int rightEyebrowMax;
+    int rightEyebrowMid;
+    int rightEyebrowPin;
+    int leftEyelidMin;
+    int leftEyelidMax;
+    int leftEyelidMid;
+    int leftEyelidPin;
+    int rightEyelidMin;
+    int rightEyelidMax;
+    int rightEyelidMid;
+    int rightEyelidPin;
+
+
     //Robot(Serial * serial);
     Robot();
     ~Robot();
@@ -102,6 +115,9 @@ public:
     double GetSonar();
 
     void SetServo(int pin, int val);
+    void ResetServo(int pin, int val);
+    void ResetServo(int pin);
+    void ResetServo();
     void SetServo(Qt::CheckState state, int min, int max, int pin, int val);
 
     void SetState(int n_leftHorizontalEye, int n_leftVerticalEye, int n_rightHorizontalEye, int n_rightVerticalEye, int n_leftEyebrow, int n_rightEyebrow, int n_rightEyelid, int n_leftEyelid, int n_leftLip, int n_rightLip, int n_jaw, int n_neckTilt, int n_neckTwist);

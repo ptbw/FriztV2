@@ -13,7 +13,7 @@ void Worker::doWork()
     bool running = true;
     while(running)
     {
-        for (int i = 5; i < 175; i = i + 5)
+        for (int i = 20; i < 160; i = i + 2)
         {
             mutex.lock();
             bool abort = _abort;
@@ -25,14 +25,15 @@ void Worker::doWork()
                 break;
             }
 
-            QEventLoop loop;
-            QTimer::singleShot(250, &loop, SLOT(quit()));
-            loop.exec();
+            //QEventLoop loop;
+            //QTimer::singleShot(250, &loop, SLOT(quit()));
+            //loop.exec();
+            I::msleep(100);
 
             emit valueChanged(i);
         }
 
-        for (int i = 175; i > 5; i = i - 5)
+        for (int i = 160; i > 20; i = i - 2)
         {
             mutex.lock();
             bool abort = _abort;
@@ -44,9 +45,11 @@ void Worker::doWork()
                 break;
             }
 
-            QEventLoop loop;
-            QTimer::singleShot(250, &loop, SLOT(quit()));
-            loop.exec();
+            //QEventLoop loop;
+            //QTimer::singleShot(250, &loop, SLOT(quit()));
+            //loop.exec();
+            I::msleep(100);
+
 
             emit valueChanged(i);
         }
