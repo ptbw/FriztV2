@@ -1,7 +1,7 @@
 #ifndef ROBOT_H
 #define ROBOT_H
 
-//#include "serial.h"
+#include "vl53l0x.h"
 #include "configwindow.h"
 #include "speak.h"
 #include "i.h"
@@ -42,15 +42,17 @@ private:
     float f_neckTilt;
     float f_neckTwist;
     
-	int sonarOutPin;
-    int sonarInPin;
+    //int sonarOutPin;
+    //int sonarInPin;
 
-    int irValue;
-    double sonarValue;
+    //int irValue;
+    //double sonarValue;
 
     //CalibrationData * cd;
 
     //Serial * serial;
+
+    vl53l0x * ranger;
 
 public:
     int leftHorizontalEyeMin;
@@ -112,7 +114,7 @@ public:
     ~Robot();
 
     void Reset();    
-    double GetSonar();
+    int GetDistance();
 
     void SetServo(int pin, int val);
     void ResetServo(int pin, int val);
@@ -132,7 +134,7 @@ public:
     void SetNeck(int angle);
 
     void SpeakMessage(QString msg);
-
+    void SpeakPhoneme(QString phoneme, QString msg);
     void SpeakWord(QString word);
 
 };

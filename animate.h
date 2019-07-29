@@ -15,7 +15,6 @@ class Animate : public QObject
 {
     Q_OBJECT
 public:
-    //explicit Animate(Serial *serial);
     explicit Animate();
     void requestWork();
     void abort();    

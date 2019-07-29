@@ -96,6 +96,7 @@ ConfigWindow::ConfigWindow(QWidget *parent) :
        currentActive[i] = false;
 
     fetchImage("aaah");
+    fetchImage("aa");
     fetchImage("eee");
     fetchImage("fuh");
     fetchImage("i");
@@ -116,7 +117,6 @@ ConfigWindow::ConfigWindow(QWidget *parent) :
     connect(worker, SIGNAL(workRequested()), thread, SLOT(start()));
     connect(thread, SIGNAL(started()), worker, SLOT(doWork()));
     connect(worker, SIGNAL(finished()), thread, SLOT(quit()), Qt::DirectConnection);
-    //connect(worker, SIGNAL(finished()), this, SLOT(DeactivateTest));
 
     robot->ResetServo();
 }
@@ -317,7 +317,72 @@ void ConfigWindow::SpeakMessage(QString msg)
 
 void ConfigWindow::on_btnTestSonar_clicked()
 {
-    double distance = robot->GetSonar();
+    int distance = robot->GetDistance();
     QString msg = QString::number(distance);
     ui->textSonar->setText(msg);
 }
+
+void ConfigWindow::ShowLips(QString shape)
+{
+    QPixmap pix = imageMap[shape];
+    ui->lblPicture->setPixmap(pix);
+    ui->lblPicture->repaint();
+}
+
+void ConfigWindow::SpeakPhoneme(QString shape, QString phoneme)
+{
+    ShowLips(shape);
+    robot->SpeakPhoneme(shape,phoneme);
+}
+
+void ConfigWindow::on_btnaaah_clicked()
+{
+    SpeakPhoneme("aaah","[['a]]");
+}
+
+void ConfigWindow::on_btnaa_clicked()
+{
+    SpeakPhoneme("aa","[['A:]]");
+}
+
+void ConfigWindow::on_btni_clicked()
+{
+    SpeakPhoneme("i","[['E]]");
+}
+
+void ConfigWindow::on_btnlaa_clicked()
+{
+    SpeakPhoneme("laa","[['eI]]");
+}
+
+void ConfigWindow::on_btnsss_clicked()
+{
+    SpeakPhoneme("sss","[['3:]]");
+}
+
+void ConfigWindow::on_btneee_clicked()
+{
+    SpeakPhoneme("eee","[['i:]]");
+}
+
+void ConfigWindow::on_btnoh_clicked()
+{
+    SpeakPhoneme("oh","[['0]]");
+}
+
+void ConfigWindow::on_btnoooh_clicked()
+{
+    SpeakPhoneme("oooh","[['O]]");
+}
+
+void ConfigWindow::on_btnfuh_clicked()
+{
+    SpeakPhoneme("fuh","[[f']]");
+}
+
+void ConfigWindow::on_btnmmm_clicked()
+{
+    SpeakPhoneme("mmm","[[m'V]]");
+}
+
+

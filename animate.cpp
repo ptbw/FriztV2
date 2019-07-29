@@ -4,9 +4,14 @@
 #include "speak.h"
 #include <QProcess>
 
+#define MINDISTANCE 300
+#define MINANGLE 40
+#define MAXANGLE 140
+
 Animate::Animate() :
     QObject(0)
 {
+
     _working = false;
     _abort = false;
     //_serial = serial;
@@ -26,16 +31,15 @@ Animate::Animate() :
 void Animate::doWork()
 {
     int dir = 1;
-    int angle = 10;
+    int angle = MINANGLE;
 
     _working = false;
     _abort = false;
 
-    double sonar = 0;
-    double previous = 9999;
+    int sonar = 0;
     bool running = true;
     Robot robot;
-
+    sonar = robot.GetDistance();
     robot.SetCentre();
     I::msleep(500);
 
@@ -43,47 +47,46 @@ void Animate::doWork()
     while(running)
     {
         mutex.lock();
-        sonar = robot.GetSonar();
-        //qWarning() << "Sonar: " << sonar << endl;
+        sonar = robot.GetDistance();
         running = !_abort;
         mutex.unlock();
-        I::msleep(100);
+        I::msleep(200);
 
 
-        if(sonar <= 50 && sonar != previous)
+        if(sonar <= MINDISTANCE)
         {
             mutex.lock();
             robot.SetExpression();
             I::msleep(1000);
-            if(previous > 50)
-            {
-                SpeakMessage("Hello my name is Fritz");
-            }
-            else
-            {
-                QString command = "fortune cookies.txt";
-                QProcess process;
-                process.start(command);
-                process.waitForFinished();
-                QString output(process.readAllStandardOutput());
-                SpeakMessage(output);
-                qWarning() << output;
-            }
-            previous = sonar;
-            sonar = 9999;
+            SpeakMessage("Hello my name is Fritz");
+
+            I::msleep(1000);
+            QString command = "fortune cookies.txt";
+            QProcess process;
+            process.start(command);
+            process.waitForFinished();
+            QString output(process.readAllStandardOutput());
+            SpeakMessage(output);
+            qWarning() << output;
+
             mutex.unlock();
             I::msleep(2000);
         }
-        if(sonar > 50)
+        else
         {
            angle = angle + (5 * dir);
-           if( angle >= 90 || angle <= 10 )
+           if( angle >= MAXANGLE || angle <= MINANGLE )
            {
                dir = dir * -1;
            }
+           mutex.lock();
            robot.SetNeck(angle);
+           mutex.unlock();
         }
      }
+    robot.SetCentre();
+    robot.ResetServo();
+
     emit done();
     emit finished();
 }
@@ -150,17 +153,6 @@ void Animate::SpeakMessage(QString msg)
 
     robot.SpeakMessage(msg);
     return;
-
-//    QStringList phons = speak.TextToPhon(msg);
-//    speak.TextToSpeech(msg);
-
-//    QStringListIterator iterator(phons);
-//    while (iterator.hasNext())
-//    {
-//        QString shape = speak.GetMouthShape(iterator.next());
-//        robot.SetMouth(shape);
-//        I::msleep(10);
-//    }
 }
 
 void Animate::requestWork()
@@ -175,12 +167,10 @@ void Animate::requestWork()
 
 void Animate::abort()
 {
-    //if (_working) {
-        mutex.lock();
-        _working = false;
-        _abort = true;
-        mutex.unlock();
-    //}
+    mutex.lock();
+    _working = false;
+    _abort = true;
+    mutex.unlock();
 }
 
 

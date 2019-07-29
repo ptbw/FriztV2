@@ -44,7 +44,7 @@ public:
     int rightVerticalEyePin;
     bool rightVerticalEyeEnabled;
 
-    int leftEyebrowTrim;
+    int leftEyebanimaterowTrim;
     int leftEyebrowMax;
     int leftEyebrowMin;
     int leftEyebrowPin;
@@ -241,6 +241,20 @@ private slots:
     void on_btnTestSonar_clicked();
 
     void SpeakMessage(QString msg);
+    void ShowLips(QString shape);
+    void SpeakPhoneme(QString shape, QString phoneme);
+
+    void on_btnaaah_clicked();
+    void on_btnaa_clicked();
+    void on_btni_clicked();
+    void on_btnlaa_clicked();
+    void on_btnsss_clicked();
+    void on_btneee_clicked();
+    void on_btnoh_clicked();
+    void on_btnoooh_clicked();
+    void on_btnfuh_clicked();
+    void on_btnmmm_clicked();
+
 
 private:
     void SetServo(int pin, float value, int max, int min, int trim, bool inverted = false);

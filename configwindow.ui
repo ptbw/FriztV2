@@ -1985,6 +1985,136 @@
     <enum>QFrame::Raised</enum>
    </property>
   </widget>
+  <widget class="QPushButton" name="btnaaah">
+   <property name="geometry">
+    <rect>
+     <x>810</x>
+     <y>400</y>
+     <width>99</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>aaah</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnaa">
+   <property name="geometry">
+    <rect>
+     <x>920</x>
+     <y>400</y>
+     <width>99</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>aa</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btni">
+   <property name="geometry">
+    <rect>
+     <x>810</x>
+     <y>440</y>
+     <width>99</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>i</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnlaa">
+   <property name="geometry">
+    <rect>
+     <x>920</x>
+     <y>440</y>
+     <width>99</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>laa</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnsss">
+   <property name="geometry">
+    <rect>
+     <x>810</x>
+     <y>480</y>
+     <width>99</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>sss</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btneee">
+   <property name="geometry">
+    <rect>
+     <x>920</x>
+     <y>480</y>
+     <width>99</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>eee</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnoh">
+   <property name="geometry">
+    <rect>
+     <x>810</x>
+     <y>520</y>
+     <width>99</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>oh</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnoooh">
+   <property name="geometry">
+    <rect>
+     <x>920</x>
+     <y>520</y>
+     <width>99</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>oooh</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnfuh">
+   <property name="geometry">
+    <rect>
+     <x>810</x>
+     <y>560</y>
+     <width>99</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>fuh</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnmmm">
+   <property name="geometry">
+    <rect>
+     <x>920</x>
+     <y>560</y>
+     <width>99</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>mmm</string>
+   </property>
+  </widget>
   <zorder>frame_13</zorder>
   <zorder>frame_2</zorder>
   <zorder>frame</zorder>
@@ -2037,6 +2167,16 @@
   <zorder>btnTestSpeech_5</zorder>
   <zorder>textSonar</zorder>
   <zorder>btnTestSonar</zorder>
+  <zorder>btnaaah</zorder>
+  <zorder>btnaa</zorder>
+  <zorder>btni</zorder>
+  <zorder>btnlaa</zorder>
+  <zorder>btnsss</zorder>
+  <zorder>btneee</zorder>
+  <zorder>btnoh</zorder>
+  <zorder>btnoooh</zorder>
+  <zorder>btnfuh</zorder>
+  <zorder>btnmmm</zorder>
  </widget>
  <tabstops>
   <tabstop>comboBox</tabstop>

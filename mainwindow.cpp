@@ -22,15 +22,14 @@ MainWindow::MainWindow(QWidget *parent) :
     thread = new QThread();
     animate = new Animate();
 
-//    animate->moveToThread(thread);
+//    ranger = new Distance();
+//    ranger->moveToThread(thread);
 
-//    connect(animate, SIGNAL(workRequested()), thread, SLOT(start()));
-//    connect(thread, SIGNAL(started()), animate, SLOT(doWork()));
-//    connect(animate, SIGNAL(done()), this, SLOT(on_Stop()));
-//    connect(animate, SIGNAL(finished()), thread, SLOT(quit()), Qt::DirectConnection);
-
-    //Robot robot;
-    //robot.SetExpression("Neutral");
+//    connect(ranger, SIGNAL(valueChanged(int)), this, SLOT(ValueChanged(int)));
+//    connect(ranger, SIGNAL(workRequested()), thread, SLOT(start()));
+//    connect(thread, SIGNAL(started()), ranger, SLOT(getDistance()));
+//    connect(ranger, SIGNAL(finished()), thread, SLOT(quit()), Qt::DirectConnection);
+//    ranger->requestWork();
 
     animationRunning = false;
 }
@@ -42,16 +41,12 @@ MainWindow::~MainWindow()
         ui->btnAnimate->setText("Animate");
         animationRunning = false;
         animate->abort();
-    }
-    //delete serial;
+    }    
+    //ranger->abort();
+    thread->wait();
+
     delete ui;
 }
-
-//void MainWindow::on_SpeakPhrase(int i)
-//{
-//    QString msg = text.at(i);
-//    SpeakMessage(msg);
-//}
 
 void MainWindow::on_Stop()
 {
@@ -142,19 +137,22 @@ void MainWindow::on_btnLeft_clicked()
 {
     //SetState(int n_leftHorizontalEye, int n_leftVerticalEye, int n_rightHorizontalEye, int n_rightVerticalEye, int n_leftEyebrow, int n_rightEyebrow, int n_rightEyelid, int n_leftEyelid, int n_leftLip, int n_rightLip, int n_jaw, int n_neckTilt, int n_neckTwist);
     Robot robot;
-    robot.SetState(40, -1, 40, -1, 30, 70, 100, 100, 50, 50, 50, -1, 10);
+    //robot.SetState(40, -1, 40, -1, 30, 70, 100, 100, 50, 50, 50, -1, 10);
+    robot.SetLeft();
 }
 
 void MainWindow::on_btnCentre_clicked()
 {
     Robot robot;
-    robot.SetState(40, -1, 40, -1, 50, 50, 100, 100, 50, 50, 50, -1, 50);
+    //robot.SetState(40, -1, 40, -1, 50, 50, 100, 100, 50, 50, 50, -1, 50);
+    robot.SetCentre();
 }
 
 void MainWindow::on_btnRight_clicked()
 {
     Robot robot;
-    robot.SetState(40, -1, 40, -1, 30, 70, 100, 100, 50, 50, 50, -1, 90);
+    //robot.SetState(40, -1, 40, -1, 30, 70, 100, 100, 50, 50, 50, -1, 90);
+    robot.SetRight();
 }
 
 void MainWindow::on_btnAnimate_clicked()
@@ -173,4 +171,7 @@ void MainWindow::on_btnAnimate_clicked()
      }
 }
 
+void MainWindow::ValueChanged(const int val)
+{
 
+}

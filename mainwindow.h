@@ -4,9 +4,11 @@
 #include <QMainWindow>
 
 #include "animate.h"
+#include "distance.h"
 //#include "serial.h"
 
 class Animate;
+class Distance;
 
 namespace Ui {
 class MainWindow;
@@ -83,13 +85,13 @@ private slots:
 
     void on_btnAnimate_clicked();
 
+    void ValueChanged(const int val);
 
 private:
     Ui::MainWindow *ui;
 
-    //Serial *serial;
-
     Animate *animate;
+    Distance *ranger;
 
     QThread *thread;
 

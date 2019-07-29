@@ -70,7 +70,7 @@
 
     phono od;
     od.ipa = "ʌ";         // blood
-    od.lips = "o//on_SpeakPhrase(value);h";
+    od.lips = "oh";
     phonos.append(od);
 
     phono on;
@@ -172,6 +172,8 @@ int Speak::TextToWave(QString text)
     command.append('"').append(text).append('"');
 
     QProcess process;
+    process.setStandardOutputFile(QProcess::nullDevice());
+    process.setStandardErrorFile(QProcess::nullDevice());
     process.start(command);
     process.waitForFinished();
 
@@ -182,6 +184,8 @@ int Speak::PlayWave()
 {
     QString command = "aplay /tmp/out.wav";
     QProcess process;
+    process.setStandardOutputFile(QProcess::nullDevice());
+    process.setStandardErrorFile(QProcess::nullDevice());
     process.startDetached(command);
     return 0;
 }

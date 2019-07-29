@@ -23,7 +23,9 @@ SOURCES += main.cpp\
     animate.cpp \
     BCM2835.c \
     Adafruit_ServoHAT.c \
-    PCA9685.c
+    PCA9685.c \
+    vl53l0x.cpp \
+    distance.cpp
 
 HEADERS  += mainwindow.h \
     configwindow.h \
@@ -38,7 +40,9 @@ HEADERS  += mainwindow.h \
     Adafruit_ServoHAT.h \
     PCA9685.h \
     Standard_Library.h \
-    System_Library.h
+    System_Library.h \
+    vl53l0x.h \
+    distance.h
 
 FORMS    += mainwindow.ui \
     aboutbox.ui \
@@ -60,3 +64,10 @@ OTHER_FILES += \
     images/phoneme mouth chart.png \
     images/sss.png \
     speech/cookies.txt
+
+unix:!macx: LIBS += -L$$PWD/../../../usr/local/lib/ -lVL53L0X_Rasp
+
+INCLUDEPATH += $$PWD/../../../usr/local/include
+DEPENDPATH += $$PWD/../../../usr/local/include
+
+unix:!macx: PRE_TARGETDEPS += $$PWD/../../../usr/local/lib/libVL53L0X_Rasp.a

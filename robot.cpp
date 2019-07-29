@@ -12,8 +12,10 @@ extern "C" {
 #define SERVOHATADDR 0x40
 #define SERVOMIN 500
 
+
+
 Robot::Robot()
-{
+{    
     //int servo_min = 500;  // Min pulse length out of 4096
 
     //const int minPin = 0;
@@ -116,7 +118,7 @@ Robot::Robot()
     // Neck 1  		80 - 100
     // Chin 2  		60 - 80
     jawMin = 60;
-    jawMax = 80;
+    jawMax = 110;
     jawMid = ((jawMax - jawMin)/2) + jawMin;
     jawPin = 2;
 
@@ -130,11 +132,12 @@ Robot::Robot()
     neckTwistMid = ((neckTwistMax - neckTwistMin)/2) + neckTwistMin;
     neckTwistPin = 0;
 
-    sonarOutPin = 15;
-    sonarInPin = 16;
+    //sonarOutPin = 15;
+    //sonarInPin = 16;
 
     // Prime the distance sensor
-    // GetSonar();
+
+
 
     map_peripheral_BCM2835(&gpio);
     map_peripheral_BCM2835(&bsc0);
@@ -162,20 +165,18 @@ Robot::Robot()
 
 Robot::~Robot()
 {
-    //delete cd;
+    ResetServo();
 }
 
 void Robot::Reset()
 {
-    //RobotState initState = new RobotState();
+
 }
 
 
-double Robot::GetSonar()
-{ 
-     sonarValue = 0;
-
-     return sonarValue;
+int Robot::GetDistance()
+{      
+     return 9999;
 }
 
 void Robot::SetServo(int pin, int angle)
@@ -202,7 +203,7 @@ void Robot::ResetServo()
 
 void Robot::SetServo( Qt::CheckState state, int min, int max, int pin, int val)
 {
-    if(val < min || val > max || state != Qt::Checked)
+    if(va000l < min || val > max || state != Qt::Checked)
     {
        ResetServo(pin, val < min ? min : max);
        return;
@@ -220,34 +221,26 @@ void Robot::SetMouth(QString shape)
 {
    if(shape == "aaah")
     {
-        SetServo(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 90 );
-        SetServo(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 90 );
-        SetServo(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 50 );
-        SetServo(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 50 );
-        SetServo(Qt::Checked, jawMin, jawMax, jawPin, 0);
-    }
-    else if(shape == "oh")
-    {
         SetServo(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 70 );
         SetServo(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 70 );
-        SetServo(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 10 );
-        SetServo(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 90 );
-        SetServo(Qt::Checked, jawMin, jawMax, jawPin, 50);
+        SetServo(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 66 );
+        SetServo(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 68 );
+        SetServo(Qt::Checked, jawMin, jawMax, jawPin, 70);
     }
     else if(shape == "aa")
     {
         SetServo(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 70 );
         SetServo(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 70 );
-        SetServo(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 10 );
-        SetServo(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 90 );
-        SetServo(Qt::Checked, jawMin, jawMax, jawPin, 20);
+        SetServo(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 50 );
+        SetServo(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 80 );
+        SetServo(Qt::Checked, jawMin, jawMax, jawPin, 30);
     }
     else if(shape == "i")
     {
         SetServo(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 70 );
         SetServo(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 70 );
-        SetServo(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 30 );
-        SetServo(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 70 );
+        SetServo(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 88 );
+        SetServo(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 44 );
         SetServo(Qt::Checked, jawMin, jawMax, jawPin, 100);
     }
     else if(shape == "laa")
@@ -256,7 +249,7 @@ void Robot::SetMouth(QString shape)
         SetServo(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 90 );
         SetServo(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 70 );
         SetServo(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 30 );
-        SetServo(Qt::Checked, jawMin, jawMax, jawPin, 20);
+        SetServo(Qt::Checked, jawMin, jawMax, jawPin, 60);
     }
     else if(shape == "sss")
     {
@@ -276,11 +269,11 @@ void Robot::SetMouth(QString shape)
     }
     else if(shape == "oh")
     {
-        SetServo(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 90 );
+        SetSer000vo(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 90 );
         SetServo(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 90 );
-        SetServo(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 50 );
-        SetServo(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 50 );
-        SetServo(Qt::Checked, jawMin, jawMax, jawPin, 10);
+        SetServo(Qt::Checked, leftLipMin, leftLipMax, leftLipPin,100 );
+        SetServo(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 30 );
+        SetServo(Qt::Checked, jawMin, jawMax, jawPin, 30);
     }
     else if(shape == "oooh")
     {
@@ -331,40 +324,42 @@ void Robot::SetState(int n_leftHorizontalEye, int n_leftVerticalEye, int n_right
     if (n_neckTwist != -1) SetServo(Qt::Checked, neckTwistMin, neckTwistMax, neckTwistPin, n_neckTwist );
     if (n_neckTilt != -1) SetServo(Qt::Checked, neckTiltMin, neckTiltMax, neckTiltPin, n_neckTilt );
     if (n_jaw != -1) SetServo(Qt::Checked, jawMin, jawMax, jawPin, n_jaw );
+    ResetServo();
 }
 
 void Robot::SetExpression(QString name)
 {
+    printf("%s \n",name.toStdString().c_str());
     if (name == "Afraid")
-        SetState(50 /*leftHorizontalEye*/, 70 /*leftVerticalEye*/, 50 /*rightHorizontalEye*/, 70 /*rightVerticalEye*/, 82 /*leftEyebrow*/, 78 /*rightEyebrow*/, 62 /*rightEyelid*/, 6 /*leftEyelid*/, 11 /*leftLip*/, 85 /*rightLip*/, 22 /*jaw*/, 50 /*neckTilt*/, -1 /*neckTwist*/);
+        SetState(70 /*leftHorizontalEye*/, 70 /*leftVerticalEye*/, 70 /*rightHorizontalEye*/, 70 /*rightVerticalEye*/, 80 /*leftEyebrow*/, 40 /*rightEyebrow*/, 70 /*rightEyelid*/, 70 /*leftEyelid*/, 110 /*leftLip*/, 70 /*rightLip*/, 20 /*jaw*/, -1 /*neckTilt*/, -1 /*neckTwist*/);
     else if (name == "Awkward")
-        SetState(52 /*leftHorizontalEye*/, 48 /*leftVerticalEye*/, 52 /*rightHorizontalEye*/, 48 /*rightVerticalEye*/, 100 /*leftEyebrow*/, 100 /*rightEyebrow*/, 45 /*rightEyelid*/, 45 /*leftEyelid*/, 100 /*leftLip*/, 0 /*rightLip*/, 67 /*jaw*/, 50 /*neckTilt*/, -1 /*neckTwist*/);
+        SetState(70 /*leftHorizontalEye*/, 48 /*leftVerticalEye*/, 70 /*rightHorizontalEye*/, 48 /*rightVerticalEye*/, 100 /*leftEyebrow*/, 100 /*rightEyebrow*/, 45 /*rightEyelid*/, 45 /*leftEyelid*/, 100 /*leftLip*/, 0 /*rightLip*/, 67 /*jaw*/, 50 /*neckTilt*/, -1 /*neckTwist*/);
     else if (name == "Angry")
-        SetState(50 /*leftHorizontalEye*/, 50 /*leftVerticalEye*/, 50 /*rightHorizontalEye*/, 50 /*rightVerticalEye*/, 1 /*leftEyebrow*/, 9 /*rightEyebrow*/, 40 /*rightEyelid*/, 40 /*leftEyelid*/, 22 /*leftLip*/, 77 /*rightLip*/, 0 /*jaw*/, 33 /*neckTilt*/, -1 /*neckTwist*/);
+        SetState(70 /*leftHorizontalEye*/, 50 /*leftVerticalEye*/, 70 /*rightHorizontalEye*/, 50 /*rightVerticalEye*/, 1 /*leftEyebrow*/, 9 /*rightEyebrow*/, 40 /*rightEyelid*/, 40 /*leftEyelid*/, 22 /*leftLip*/, 77 /*rightLip*/, 0 /*jaw*/, 33 /*neckTilt*/, -1 /*neckTwist*/);
     else if (name == "Disappointed")
-        SetState(47 /*leftHorizontalEye*/, 78 /*leftVerticalEye*/, 47 /*rightHorizontalEye*/, 78 /*rightVerticalEye*/, 44 /*leftEyebrow*/, 43 /*rightEyebrow*/, 7 /*rightEyelid*/, 7 /*leftEyelid*/, 31 /*leftLip*/, 68 /*rightLip*/, 0 /*jaw*/, 17 /*neckTilt*/, -1 /*neckTwist*/);
+        SetState(70 /*leftHorizontalEye*/, 78 /*leftVerticalEye*/, 70 /*rightHorizontalEye*/, 78 /*rightVerticalEye*/, 44 /*leftEyebrow*/, 43 /*rightEyebrow*/, 7 /*rightEyelid*/, 7 /*leftEyelid*/, 31 /*leftLip*/, 68 /*rightLip*/, 0 /*jaw*/, 17 /*neckTilt*/, -1 /*neckTwist*/);
     else if (name == "Happy")
-        SetState(63 /*leftHorizontalEye*/, 56 /*leftVerticalEye*/, 50 /*rightHorizontalEye*/, 56 /*rightVerticalEye*/, 76 /*leftEyebrow*/, 66 /*rightEyebrow*/, 40 /*rightEyelid*/, 40 /*leftEyelid*/, 5 /*leftLip*/, 95 /*rightLip*/, 10 /*jaw*/, 50 /*neckTilt*/, -1 /*neckTwist*/);
+        SetState(70 /*leftHorizontalEye*/, 56 /*leftVerticalEye*/, 70 /*rightHorizontalEye*/, 56 /*rightVerticalEye*/, 76 /*leftEyebrow*/, 66 /*rightEyebrow*/, 40 /*rightEyelid*/, 40 /*leftEyelid*/, 5 /*leftLip*/, 95 /*rightLip*/, 10 /*jaw*/, 50 /*neckTilt*/, -1 /*neckTwist*/);
     else if (name == "Neutral")
-        SetState(90 /*leftHorizontalEye*/, 90 /*leftVerticalEye*/, 90 /* rightHorizontalEye*/, 90 /*rightVerticalEye*/, 90 /*leftEyebrow*/, 90 /*rightEyebrow*/, 90 /*rightEyelid*/, 90 /*leftEyelid*/, 90 /*leftLip*/, 90 /*rightLip*/, 90 /*jaw*/, 90 /*neckTilt*/, 90 /*neckTwist*/);
+        SetState(70 /*leftHorizontalEye*/, 90 /*leftVerticalEye*/, 70 /* rightHorizontalEye*/, 90 /*rightVerticalEye*/, 90 /*leftEyebrow*/, 90 /*rightEyebrow*/, 90 /*rightEyelid*/, 90 /*leftEyelid*/, 90 /*leftLip*/, 90 /*rightLip*/, 90 /*jaw*/, 90 /*neckTilt*/, 90 /*neckTwist*/);
     else if (name == "Sad")
-        SetState(56 /*leftHorizontalEye*/, 64 /*leftVerticalEye*/, 56 /*rightHorizontalEye*/, 64 /*rightVerticalEye*/, 10 /*leftEyebrow*/, 90 /*rightEyebrow*/, 57 /*rightEyelid*/, 57 /*leftEyelid*/, 95 /*leftLip*/, 5 /*rightLip*/, 90 /*jaw*/, 50 /*neckTilt*/, -1 /*neckTwist*/);
+        SetState(70 /*leftHorizontalEye*/, 64 /*leftVerticalEye*/, 70 /*rightHorizontalEye*/, 64 /*rightVerticalEye*/, 10 /*leftEyebrow*/, 90 /*rightEyebrow*/, 57 /*rightEyelid*/, 57 /*leftEyelid*/, 95 /*leftLip*/, 5 /*rightLip*/, 90 /*jaw*/, 50 /*neckTilt*/, -1 /*neckTwist*/);
     else if (name == "Sinister")
-        SetState(50 /*leftHorizontalEye*/, 44 /*leftVerticalEye*/, 5 /*rightHorizontalEye*/, 44 /*rightVerticalEye*/, 7 /*leftEyebrow*/, 6 /*rightEyebrow*/, 6 /*rightEyelid*/, 6 /*leftEyelid*/, 70 /*leftLip*/, 29 /*rightLip*/, 67 /*jaw*/, 50 /*neckTilt*/, -1.0 /*neckTwist*/);
+        SetState(70 /*leftHorizontalEye*/, 44 /*leftVerticalEye*/, 70 /*rightHorizontalEye*/, 44 /*rightVerticalEye*/, 7 /*leftEyebrow*/, 6 /*rightEyebrow*/, 6 /*rightEyelid*/, 6 /*leftEyelid*/, 70 /*leftLip*/, 29 /*rightLip*/, 67 /*jaw*/, 50 /*neckTilt*/, -1.0 /*neckTwist*/);
     else if (name == "Sleepy")
-        SetState(50 /*leftHorizontalEye*/, 70 /*leftVerticalEye*/, 50 /*rightHorizontalEye*/, 70 /*rightVerticalEye*/, 90 /*leftEyebrow*/, 10 /*rightEyebrow*/, 10 /*rightEyelid*/, 10 /*leftEyelid*/, 25 /*leftLip*/, 75 /*rightLip*/, 100 /*jaw*/, 30 /*neckTilt*/, -1.0 /*neckTwist*/);
+        SetState(70 /*leftHorizontalEye*/, 70 /*leftVerticalEye*/, 70 /*rightHorizontalEye*/, 70 /*rightVerticalEye*/, 90 /*leftEyebrow*/, 10 /*rightEyebrow*/, 10 /*rightEyelid*/, 10 /*leftEyelid*/, 25 /*leftLip*/, 75 /*rightLip*/, 100 /*jaw*/, 30 /*neckTilt*/, -1.0 /*neckTwist*/);
     else if (name == "Smile")
-        SetState(63 /*leftHorizontalEye*/, 56 /*leftVerticalEye*/, 50 /*rightHorizontalEye*/, 56 /*rightVerticalEye*/, 59 /*leftEyebrow*/, 58 /*rightEyebrow*/, 7 /*rightEyelid*/, 7 /*leftEyelid*/, 100 /*leftLip*/, 0 /*rightLip*/, 0 /*jaw*/, 50 /*neckTilt*/, -1.0 /*neckTwist*/);
+        SetState(70 /*leftHorizontalEye*/, 56 /*leftVerticalEye*/, 70 /*rightHorizontalEye*/, 56 /*rightVerticalEye*/, 59 /*leftEyebrow*/, 58 /*rightEyebrow*/, 7 /*rightEyelid*/, 7 /*leftEyelid*/, 100 /*leftLip*/, 0 /*rightLip*/, 0 /*jaw*/, 50 /*neckTilt*/, -1.0 /*neckTwist*/);
     else if (name == "Sneaky")
-        SetState(62 /*leftHorizontalEye*/, 30 /*leftVerticalEye*/, 62 /*rightHorizontalEye*/, 30 /*rightVerticalEye*/, 58 /*leftEyebrow*/, 51 /*rightEyebrow*/, 26 /*rightEyelid*/, 26 /*leftEyelid*/, 0 /*leftLip*/, 0 /*rightLip*/, 92/*jaw*/, 50 /*neckTilt*/, -1.0 /*neckTwist*/);
+        SetState(70 /*leftHorizontalEye*/, 30 /*leftVerticalEye*/, 70 /*rightHorizontalEye*/, 30 /*rightVerticalEye*/, 58 /*leftEyebrow*/, 51 /*rightEyebrow*/, 26 /*rightEyelid*/, 26 /*leftEyelid*/, 0 /*leftLip*/, 0 /*rightLip*/, 92/*jaw*/, 50 /*neckTilt*/, -1.0 /*neckTwist*/);
     else if (name == "Sulk")
-        SetState(37 /*leftHorizontalEye*/, 60 /*leftVerticalEye*/, 37 /*rightHorizontalEye*/, 61 /*rightVerticalEye*/, 33 /*leftEyebrow*/, 32 /*rightEyebrow*/, 76 /*rightEyelid*/, 76 /*leftEyelid*/, 17 /*leftLip*/, 36 /*rightLip*/, 0 /*jaw*/, 50 /*neckTilt*/, -1.0 /*neckTwist*/);
+        SetState(70 /*leftHorizontalEye*/, 60 /*leftVerticalEye*/, 70 /*rightHorizontalEye*/, 61 /*rightVerticalEye*/, 33 /*leftEyebrow*/, 32 /*rightEyebrow*/, 76 /*rightEyelid*/, 76 /*leftEyelid*/, 17 /*leftLip*/, 36 /*rightLip*/, 0 /*jaw*/, 50 /*neckTilt*/, -1.0 /*neckTwist*/);
     else if (name == "Surprised")
-        SetState(50 /*leftHorizontalEye*/, 47 /*leftVerticalEye*/, 50 /*rightHorizontalEye*/, 47 /*rightVerticalEye*/, 10 /*leftEyebrow*/, 90 /*rightEyebrow*/, 100 /*rightEyelid*/, 100 /*leftEyelid*/, 25 /*leftLip*/, 71 /*rightLip*/, 0 /*jaw*/, 50 /*neckTilt*/, -1.0 /*neckTwist*/);
+        SetState(70 /*leftHorizontalEye*/, 47 /*leftVerticalEye*/, 70 /*rightHorizontalEye*/, 47 /*rightVerticalEye*/, 10 /*leftEyebrow*/, 90 /*rightEyebrow*/, 100 /*rightEyelid*/, 100 /*leftEyelid*/, 25 /*leftLip*/, 71 /*rightLip*/, 0 /*jaw*/, 50 /*neckTilt*/, -1.0 /*neckTwist*/);
     else if (name == "Yelling")
-        SetState(50 /*leftHorizontalEye*/, 50 /*leftVerticalEye*/, 50 /*rightHorizontalEye*/, 50 /*rightVerticalEye*/, 10 /*leftEyebrow*/, 9 /*rightEyebrow*/, 40 /*rightEyelid*/, 4 /*leftEyelid*/, 22 /*leftLip*/, 77 /*rightLip*/, 100 /*jaw*/, 33 /*neckTilt*/, -1.0 /*neckTwist*/);
+        SetState(70 /*leftHorizontalEye*/, 50 /*leftVerticalEye*/, 70 /*rightHorizontalEye*/, 50 /*rightVerticalEye*/, 10 /*leftEyebrow*/, 9 /*rightEyebrow*/, 40 /*rightEyelid*/, 4 /*leftEyelid*/, 22 /*leftLip*/, 77 /*rightLip*/, 100 /*jaw*/, 33 /*neckTilt*/, -1.0 /*neckTwist*/);
     else if (name == "Worried")
-        SetState(51 /*leftHorizontalEye*/, 37 /*leftVerticalEye*/, 51 /*rightHorizontalEye*/, 37 /*rightVerticalEye*/, 80 /*leftEyebrow*/, 80 /*rightEyebrow*/, 7 /*rightEyelid*/, 7 /*leftEyelid*/, 18 /*leftLip*/, 81 /*rightLip*/, 50 /*jaw*/, 67 /*neckTilt*/, -1.0 /*neckTwist*/);
+        SetState(70 /*leftHorizontalEye*/, 37 /*leftVerticalEye*/, 70 /*rightHorizontalEye*/, 37 /*rightVerticalEye*/, 80 /*leftEyebrow*/, 80 /*rightEyebrow*/, 7 /*rightEyelid*/, 7 /*leftEyelid*/, 18 /*leftLip*/, 81 /*rightLip*/, 50 /*jaw*/, 67 /*neckTilt*/, -1.0 /*neckTwist*/);
     else
         SetState(50 /*leftHorizontalEye*/, 90 /*leftVerticalEye*/, 90 /* rightHorizontalEye*/, 90 /*rightVerticalEye*/, 90 /*leftEyebrow*/, 90 /*rightEyebrow*/, 90 /*rightEyelid*/, 90 /*leftEyelid*/, 90 /*leftLip*/, 90 /*rightLip*/, 90 /*jaw*/, 90 /*neckTilt*/, 90 /*neckTwist*/);
 
@@ -372,66 +367,51 @@ void Robot::SetExpression(QString name)
 }
 
 void Robot::SetExpression(int e)
-{
-    if (e == 0)
-        SetState(50 /*leftHorizontalEye*/, 70 /*leftVerticalEye*/, 50 /*rightHorizontalEye*/, 70 /*rightVerticalEye*/, 82 /*leftEyebrow*/, 78 /*rightEyebrow*/, 62 /*rightEyelid*/, 6 /*leftEyelid*/, 11 /*leftLip*/, 85 /*rightLip*/, 22 /*jaw*/, 50 /*neckTilt*/, -1 /*neckTwist*/);
-    else if (e == 1)
-        SetState(52 /*leftHorizontalEye*/, 48 /*leftVerticalEye*/, 52 /*rightHorizontalEye*/, 48 /*rightVerticalEye*/, 100 /*leftEyebrow*/, 100 /*rightEyebrow*/, 45 /*rightEyelid*/, 45 /*leftEyelid*/, 100 /*leftLip*/, 0 /*rightLip*/, 67 /*jaw*/, 50 /*neckTilt*/, -1 /*neckTwist*/);
-    else if (e == 2)
-        SetState(50 /*leftHorizontalEye*/, 50 /*leftVerticalEye*/, 50 /*rightHorizontalEye*/, 50 /*rightVerticalEye*/, 1 /*leftEyebrow*/, 9 /*rightEyebrow*/, 40 /*rightEyelid*/, 40 /*leftEyelid*/, 22 /*leftLip*/, 77 /*rightLip*/, 0 /*jaw*/, 33 /*neckTilt*/, -1 /*neckTwist*/);
-    else if (e == 3)
-        SetState(47 /*leftHorizontalEye*/, 78 /*leftVerticalEye*/, 47 /*rightHorizontalEye*/, 78 /*rightVerticalEye*/, 44 /*leftEyebrow*/, 43 /*rightEyebrow*/, 7 /*rightEyelid*/, 7 /*leftEyelid*/, 31 /*leftLip*/, 68 /*rightLip*/, 0 /*jaw*/, 17 /*neckTilt*/, -1 /*neckTwist*/);
-    else if (e == 4)
-        SetState(63 /*leftHorizontalEye*/, 56 /*leftVerticalEye*/, 50 /*rightHorizontalEye*/, 56 /*rightVerticalEye*/, 76 /*leftEyebrow*/, 66 /*rightEyebrow*/, 40 /*rightEyelid*/, 40 /*leftEyelid*/, 5 /*leftLip*/, 95 /*rightLip*/, 10 /*jaw*/, 50 /*neckTilt*/, -1 /*neckTwist*/);
-    else if (e ==5)
-        SetState(50 /*leftHorizontalEye*/, 50 /*leftVerticalEye*/, 60 /* 50 rightHorizontalEye*/, 10 /* 50 rightVerticalEye*/, 50 /*leftEyebrow*/, 50 /*rightEyebrow*/, 50 /*rightEyelid*/, 50 /*leftEyelid*/, 50 /*leftLip*/, 50 /*rightLip*/, 0 /*jaw*/, 50 /*neckTilt*/, 50/*neckTwist*/);
-    else if (e == 6)
-        SetState(50 /*leftHorizontalEye*/, 90 /*leftVerticalEye*/, 90 /* rightHorizontalEye*/, 90 /*rightVerticalEye*/, 90 /*leftEyebrow*/, 90 /*rightEyebrow*/, 90 /*rightEyelid*/, 90 /*leftEyelid*/, 90 /*leftLip*/, 90 /*rightLip*/, 90 /*jaw*/, 90 /*neckTilt*/, 90 /*neckTwist*/);
-    else if (e == 7)
-        SetState(50 /*leftHorizontalEye*/, 44 /*leftVerticalEye*/, 5 /*rightHorizontalEye*/, 44 /*rightVerticalEye*/, 7 /*leftEyebrow*/, 6 /*rightEyebrow*/, 6 /*rightEyelid*/, 6 /*leftEyelid*/, 70 /*leftLip*/, 29 /*rightLip*/, 67 /*jaw*/, 50 /*neckTilt*/, -1.0 /*neckTwist*/);
-    else if (e == 8)
-        SetState(50 /*leftHorizontalEye*/, 70 /*leftVerticalEye*/, 50 /*rightHorizontalEye*/, 70 /*rightVerticalEye*/, 90 /*leftEyebrow*/, 10 /*rightEyebrow*/, 10 /*rightEyelid*/, 10 /*leftEyelid*/, 25 /*leftLip*/, 75 /*rightLip*/, 100 /*jaw*/, 30 /*neckTilt*/, -1.0 /*neckTwist*/);
-    else if (e == 9)
-        SetState(63 /*leftHorizontalEye*/, 56 /*leftVerticalEye*/, 50 /*rightHorizontalEye*/, 56 /*rightVerticalEye*/, 59 /*leftEyebrow*/, 58 /*rightEyebrow*/, 7 /*rightEyelid*/, 7 /*leftEyelid*/, 100 /*leftLip*/, 0 /*rightLip*/, 0 /*jaw*/, 50 /*neckTilt*/, -1.0 /*neckTwist*/);
-    else if (e == 10)
-        SetState(62 /*leftHorizontalEye*/, 30 /*leftVerticalEye*/, 62 /*rightHorizontalEye*/, 30 /*rightVerticalEye*/, 58 /*leftEyebrow*/, 51 /*rightEyebrow*/, 26 /*rightEyelid*/, 26 /*leftEyelid*/, 0 /*leftLip*/, 0 /*rightLip*/, 92/*jaw*/, 50 /*neckTilt*/, -1.0 /*neckTwist*/);
-    else if (e == 11)
-        SetState(37 /*leftHorizontalEye*/, 60 /*leftVerticalEye*/, 37 /*rightHorizontalEye*/, 61 /*rightVerticalEye*/, 33 /*leftEyebrow*/, 32 /*rightEyebrow*/, 76 /*rightEyelid*/, 76 /*leftEyelid*/, 17 /*leftLip*/, 36 /*rightLip*/, 0 /*jaw*/, 50 /*neckTilt*/, -1.0 /*neckTwist*/);
-    else if (e == 12)
-        SetState(50 /*leftHorizontalEye*/, 47 /*leftVerticalEye*/, 50 /*rightHorizontalEye*/, 47 /*rightVerticalEye*/, 10 /*leftEyebrow*/, 90 /*rightEyebrow*/, 100 /*rightEyelid*/, 100 /*leftEyelid*/, 25 /*leftLip*/, 71 /*rightLip*/, 0 /*jaw*/, 50 /*neckTilt*/, -1.0 /*neckTwist*/);
-    else if (e == 13)
-        SetState(50 /*leftHorizontalEye*/, 50 /*leftVerticalEye*/, 50 /*rightHorizontalEye*/, 50 /*rightVerticalEye*/, 10 /*leftEyebrow*/, 9 /*rightEyebrow*/, 40 /*rightEyelid*/, 4 /*leftEyelid*/, 22 /*leftLip*/, 77 /*rightLip*/, 100 /*jaw*/, 33 /*neckTilt*/, -1.0 /*neckTwist*/);
-    else if (e == 14)
-        SetState(51 /*leftHorizontalEye*/, 37 /*leftVerticalEye*/, 51 /*rightHorizontalEye*/, 37 /*rightVerticalEye*/, 80 /*leftEyebrow*/, 80 /*rightEyebrow*/, 7 /*rightEyelid*/, 7 /*leftEyelid*/, 18 /*leftLip*/, 81 /*rightLip*/, 50 /*jaw*/, 67 /*neckTilt*/, -1.0 /*neckTwist*/);
+{   
+    if (e == 0) SetExpression("Afraid");
+    else if (e == 1) SetExpression("Awkward");
+    else if (e == 2) SetExpression("Angry");
+    else if (e == 3) SetExpression("Disappointed");
+    else if (e == 4) SetExpression("Happy");
+    else if (e == 5) SetExpression("Neutral");
+    else if (e == 6) SetExpression("Sad");
+    else if (e == 7) SetExpression("Sinister");
+    else if (e == 8) SetExpression("Sleepy");
+    else if (e == 9) SetExpression("Smile");
+    else if (e == 10) SetExpression("Sneaky");
+    else if (e == 11) SetExpression("Sulk");
+    else if (e == 12) SetExpression("Surprised");
+    else if (e == 13) SetExpression("Yelling");
+    else if (e == 14) SetExpression("Worried");
     else
-        SetState(50 /*leftHorizontalEye*/, 90 /*leftVerticalEye*/, 90 /* rightHorizontalEye*/, 90 /*rightVerticalEye*/, 90 /*leftEyebrow*/, 90 /*rightEyebrow*/, 90 /*rightEyelid*/, 90 /*leftEyelid*/, 90 /*leftLip*/, 90 /*rightLip*/, 90 /*jaw*/, 90 /*neckTilt*/, 90 /*neckTwist*/);
+        SetExpression("Normal");
 }
 
 void Robot::SetExpression()
 {
     int value = (int)(qrand() % 15);
-    SetExpression(value);
+    SetExpression(value);    
 }
 
 //SetState(int n_leftHorizontalEye, int n_leftVerticalEye, int n_rightHorizontalEye, int n_rightVerticalEye, int n_leftEyebrow, int n_rightEyebrow, int n_rightEyelid, int n_leftEyelid, int n_leftLip, int n_rightLip, int n_jaw, int n_neckTilt, int n_neckTwist);
 void Robot::SetLeft()
 {
-    SetState(50 /*leftHorizontalEye*/, 50 /*leftVerticalEye*/, 60 /* 50 rightHorizontalEye*/, 10 /* 50 rightVerticalEye*/, 50 /*leftEyebrow*/, 50 /*rightEyebrow*/, 50 /*rightEyelid*/, 50 /*leftEyelid*/, 50 /*leftLip*/, 50 /*rightLip*/, 0 /*jaw*/, 50 /*neckTilt*/, 5/*neckTwist*/);
+    SetState(90 /*leftHorizontalEye*/, 90 /*leftVerticalEye*/, 60 /* 50 rightHorizontalEye*/, 10 /* 50 rightVerticalEye*/, 100 /*leftEyebrow*/, 30 /*rightEyebrow*/, 90 /*rightEyelid*/, 90 /*leftEyelid*/, 80 /*leftLip*/, 80 /*rightLip*/, 100 /*jaw*/, -1 /*neckTilt*/, 30/*neckTwist*/);
 }
 
 void Robot::SetCentre()
 {
-    SetState(50 /*leftHorizontalEye*/, 50 /*leftVerticalEye*/, 60 /* 50 rightHorizontalEye*/, 10 /* 50 rightVerticalEye*/, 50 /*leftEyebrow*/, 50 /*rightEyebrow*/, 50 /*rightEyelid*/, 50 /*leftEyelid*/, 50 /*leftLip*/, 50 /*rightLip*/, 0 /*jaw*/, 50 /*neckTilt*/, 90/*neckTwist*/);
+    SetState(90 /*leftHorizontalEye*/, 90 /*leftVerticalEye*/, 130 /* 50 rightHorizontalEye*/, 50 /* 50 rightVerticalEye*/, 100 /*leftEyebrow*/, 30 /*rightEyebrow*/, 90 /*rightEyelid*/, 90 /*leftEyelid*/, 80 /*leftLip*/, 80 /*rightLip*/, 100 /*jaw*/, -1 /*neckTilt*/, 90/*neckTwist*/);
 }
 
 void Robot::SetRight()
 {
-    SetState(50 /*leftHorizontalEye*/, 50 /*leftVerticalEye*/, 60 /* 50 rightHorizontalEye*/, 10 /* 50 rightVerticalEye*/, 50 /*leftEyebrow*/, 50 /*rightEyebrow*/, 50 /*rightEyelid*/, 50 /*leftEyelid*/, 50 /*leftLip*/, 50 /*rightLip*/, 0 /*jaw*/, 50 /*neckTilt*/, 175/*neckTwist*/);
+    SetState(90 /*leftHorizontalEye*/, 90 /*leftVerticalEye*/, 60 /* 50 rightHorizontalEye*/, 10 /* 50 rightVerticalEye*/, 100 /*leftEyebrow*/, 30 /*rightEyebrow*/, 50 /*rightEyelid*/, 90 /*leftEyelid*/, 80 /*leftLip*/, 80 /*rightLip*/, 100 /*jaw*/, -1 /*neckTilt*/, 150/*neckTwist*/);
 }
 
 void Robot::SetNeck(int angle)
 {
-    SetState(50 /*leftHorizontalEye*/, 50 /*leftVerticalEye*/, 60 /* 50 rightHorizontalEye*/, 10 /* 50 rightVerticalEye*/, 50 /*leftEyebrow*/, 50 /*rightEyebrow*/, 50 /*rightEyelid*/, 50 /*leftEyelid*/, 50 /*leftLip*/, 50 /*rightLip*/, 0 /*jaw*/, 50 /*neckTilt*/, angle/*neckTwist*/);
+    SetState( -1 /*leftHorizontalEye*/, -1 /*leftVerticalEye*/, -1 /* rightHorizontalEye*/, -1 /* rightVerticalEye*/, -1 /*leftEyebrow*/, -1 /*rightEyebrow*/, -1 /*rightEyelid*/, -1 /*leftEyelid*/, -1 /*leftLip*/, -1 /*rightLip*/, -1 /*jaw*/, -1 /*neckTilt*/, angle/*neckTwist*/);
 }
 
 void Robot::SpeakMessage(QString msg)
@@ -446,12 +426,12 @@ void Robot::SpeakMessage(QString msg)
        SpeakWord(iterator.next());
        I::msleep(100);
     }
+    ResetServo();
 }
 
 void Robot::SpeakWord(QString msg)
 {
     Speak speak;
-    //Robot robot;
 
     QStringList phons = speak.TextToPhon(msg);
     speak.TextToSpeech(msg);
@@ -460,10 +440,19 @@ void Robot::SpeakWord(QString msg)
     while (iterator.hasNext())
     {
         QString shape = speak.GetMouthShape(iterator.next());
-        //robot.SetMouth(shape);
         SetMouth(shape);
         I::msleep(60);
     }
+}
+
+void Robot::SpeakPhoneme(QString phoneme, QString msg)
+{
+    Speak speak;
+
+    SetMouth(phoneme);
+    speak.TextToSpeech(msg);
+    I::msleep(120);
+    ResetServo();
 }
 
 
