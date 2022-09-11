@@ -111,13 +111,14 @@ void MainWindow::on_btnAsk_clicked()
 
 void MainWindow::on_btnFortune_clicked()
 {
-    QString command = "fortune cookies.txt";
-    //QString command = "fortune -s";
+    QString command("speakme");
 
     QProcess process;
     process.start(command);
     process.waitForFinished();
+
     QString output(process.readAllStandardOutput());
+    printf("%s \n",output.toStdString().c_str());
     SpeakMessage(output);
 }
 

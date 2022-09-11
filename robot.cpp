@@ -203,7 +203,7 @@ void Robot::ResetServo()
 
 void Robot::SetServo( Qt::CheckState state, int min, int max, int pin, int val)
 {
-    if(va000l < min || val > max || state != Qt::Checked)
+    if(val < min || val > max || state != Qt::Checked)
     {
        ResetServo(pin, val < min ? min : max);
        return;
@@ -241,53 +241,53 @@ void Robot::SetMouth(QString shape)
         SetServo(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 70 );
         SetServo(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 88 );
         SetServo(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 44 );
-        SetServo(Qt::Checked, jawMin, jawMax, jawPin, 100);
+        SetServo(Qt::Checked, jawMin, jawMax, jawPin, 64);
     }
     else if(shape == "laa")
     {
         SetServo(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 90 );
         SetServo(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 90 );
         SetServo(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 70 );
-        SetServo(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 30 );
+        SetServo(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 68 );
         SetServo(Qt::Checked, jawMin, jawMax, jawPin, 60);
     }
     else if(shape == "sss")
     {
         SetServo(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 70 );
         SetServo(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 70 );
-        SetServo(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 20 );
-        SetServo(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 80 );
+        SetServo(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 46 );
+        SetServo(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 92 );
         SetServo(Qt::Checked, jawMin, jawMax, jawPin, 90);
     }
     else if(shape == "eee")
     {
         SetServo(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 70 );
         SetServo(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 70 );
-        SetServo(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 10 );
-        SetServo(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 90 );
-        SetServo(Qt::Checked, jawMin, jawMax, jawPin, 30);
+        SetServo(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 88 );
+        SetServo(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 46 );
+        SetServo(Qt::Checked, jawMin, jawMax, jawPin, 74);
     }
     else if(shape == "oh")
     {
-        SetSer000vo(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 90 );
+        SetServo(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 90 );
         SetServo(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 90 );
         SetServo(Qt::Checked, leftLipMin, leftLipMax, leftLipPin,100 );
         SetServo(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 30 );
-        SetServo(Qt::Checked, jawMin, jawMax, jawPin, 30);
+        SetServo(Qt::Checked, jawMin, jawMax, jawPin, 60);
     }
     else if(shape == "oooh")
     {
         SetServo(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 90 );
         SetServo(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 90 );
         SetServo(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 20 );
-        SetServo(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 80 );
-        SetServo(Qt::Checked, jawMin, jawMax, jawPin, 0);
+        SetServo(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 30 );
+        SetServo(Qt::Checked, jawMin, jawMax, jawPin, 60);
     }
     else if(shape == "fuh")
     {
         SetServo(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 90 );
         SetServo(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 90 );
-        SetServo(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 50 );
+        SetServo(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 84 );
         SetServo(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 50 );
         SetServo(Qt::Checked, jawMin, jawMax, jawPin, 90);
     }
@@ -295,16 +295,16 @@ void Robot::SetMouth(QString shape)
     {
         SetServo(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 70 );
         SetServo(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 70 );
-        SetServo(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 40 );
-        SetServo(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 60 );
+        SetServo(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 62);
+        SetServo(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 80 );
         SetServo(Qt::Checked, jawMin, jawMax, jawPin, 100);
     }
     else
     {
         SetServo(Qt::Checked, leftEyelidMin, leftEyelidMax, leftEyelidPin, 70 );
         SetServo(Qt::Checked, rightEyelidMin, rightEyelidMax, rightEyelidPin, 70 );
-        SetServo(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 50 );
-        SetServo(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 50 );
+        SetServo(Qt::Checked, leftLipMin, leftLipMax, leftLipPin, 62 );
+        SetServo(Qt::Checked, rightLipMin, rightLipMax, rightLipPin, 92 );
         SetServo(Qt::Checked, jawMin, jawMax, jawPin, 100);
     }
 }
