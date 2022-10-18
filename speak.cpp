@@ -2,6 +2,7 @@
 
 #include <QProcess>
 #include <QList>
+#include <QDebug>
 
  Speak::Speak()
 {
@@ -127,19 +128,28 @@
 
  QString Speak::GetMouthShape(QString phon)
  {
+     //qDebug() << "Check" << phon;
      QVectorIterator<phono> i(phonos);
      while( i.hasNext())
      {
         phono p = i.next();
-        if( phon.contains(p.ipa) )
+        if( phon == p.ipa )
+        {
+            if(p.lips == "")
+            {
+                qDebug() << phon << " Bad Mapping" << endl;
+                return "aa";
+            }
             return p.lips;
+        }
      }
+
      return "sss";
  }
 
  QStringList Speak::TextToPhon(QString text)
  {
-     QString command = "espeak -s160 -k20 -ven-uk-rp -q --ipa=3 ";
+     QString command = "espeak -s160 -k20 -ven-uk-rp -q --ipa=1 ";  // Was ipa=3 but stopped working at some point and was replaced with _
      command.append('"').append(text).append('"');
 
      QProcess process;
@@ -147,8 +157,10 @@
      process.waitForFinished();
      QString result(process.readAllStandardOutput());
      result.remove("\n");
-     result.replace(" ","_ _");
-     return result.split("_",QString::SkipEmptyParts);
+     result.replace("ˈ"," ");
+     result.replace(" ","_ _");     
+     QStringList results = result.split("_",QString::SkipEmptyParts);
+     return results;
  }
 
 
@@ -158,17 +170,17 @@ int Speak::TextToSpeech(QString text)
     PlayWave();
     return 0;
 
-    QString command = "espeak -s130 -k20 -ven-uk-rp --stdout  ";
-    command.append('"').append(text).append('"').append(" | aplay");
+//    QString command = "espeak -s130 -k20 -ven-uk-rp --stdout  ";
+//    command.append('"').append(teGetMouthShapext).append('"').append(" | aplay");
 
-    QProcess process;
-    process.startDetached(command);
-    return 0;
+//    QProcess process;
+//    process.startDetached(command);
+//    return 0;
 }
 
 int Speak::TextToWave(QString text)
 {
-    QString command = "espeak -s130 -k20 -ven-uk-rp -w /tmp/out.wav ";
+    QString command = "espeak -s150 -k20 -ven-uk-rp -w /tmp/out.wav ";
     command.append('"').append(text).append('"');
 
     QProcess process;
@@ -182,10 +194,11 @@ int Speak::TextToWave(QString text)
 
 int Speak::PlayWave()
 {
-    QString command = "aplay /tmp/out.wav";
+    QString command = "aplay";
     QProcess process;
+    QStringList args = {"-q","/tmp/out.wav"};
     process.setStandardOutputFile(QProcess::nullDevice());
     process.setStandardErrorFile(QProcess::nullDevice());
-    process.startDetached(command);
+    process.startDetached(command,args);
     return 0;
 }

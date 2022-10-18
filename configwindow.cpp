@@ -9,6 +9,7 @@
 #include <QThread>
 #include <QImageReader>
 #include <QMap>
+#include <QDebug>
 
 CalibrationData::CalibrationData()
 {
@@ -49,7 +50,7 @@ ConfigWindow::ConfigWindow(QWidget *parent) :
     ui->rightHorizontalEyeMax->setText(QString::number(robot->rightHorizontalEyeMax));
     //ui->rightHorizontalEyeTrim->setText(QString::number(robot->rightHorizontalEyeMid));
     //ui->rightHorizontalEyePin->setText(QString::number(robot->rightHorizontalEyePin));
-    ui->rightVerticalEyeMin->setText(QString::number(robot->leftEyebrowMin));
+    ui->rightVerticalEyeMin->setText(QString::number(robot->leftVerticalEyeMin));
     ui->rightVerticalEyeMax->setText(QString::number(robot->rightVerticalEyeMax));
     //ui->rightVerticalEyeTrim->setText(QString::number(robot->rightVerticalEyeMid));
     //ui->rightVerticalEyePin->setText(QString::number(robot->rightVerticalEyePin));
@@ -153,7 +154,7 @@ ConfigWindow::~ConfigWindow()
 void ConfigWindow::ActivateTest(const int val)
 {
     robot->SetServo(ui->leftEyebrowTest->checkState(),ui->leftEyebrowMin->text().toInt(), ui->leftEyebrowMax->text().toInt(),ui->leftEyebrowPin->text().toInt(), val );
-    robot->SetServo(ui->rightEyebrowTest->checkState(), ui->rightEyebrowMin->text().toInt(), ui->rightEyebrowMax->text().toInt(), ui->rightEyebrowPin->text().toInt(), val );
+    robot->SetServo(ui->rightEyebrowTest->checkState(), ui->rightEyebrowMin->text().toInt(), ui->rightEyebrowMax->text().toInt(), ui->rightEyebrowPin->text().toInt(), (SERVO_MAX - val) + SERVO_MIN );
 
     robot->SetServo(ui->leftEyelidTest->checkState(), ui->leftEyelidMin->text().toInt(), ui->leftEyelidMax->text().toInt(), ui->leftEyelidPin->text().toInt(), val );
     robot->SetServo(ui->rightEyelidTest->checkState(), ui->rightEyelidMin->text().toInt(), ui->rightEyelidMax->text().toInt(), ui->rightEyelidPin->text().toInt(), val );
@@ -162,14 +163,17 @@ void ConfigWindow::ActivateTest(const int val)
     robot->SetServo(ui->rightHorizontalEyeTest->checkState(), ui->rightHorizontalEyeMin->text().toInt(), ui->rightHorizontalEyeMax->text().toInt(), ui->rightHorizontalEyePin->text().toInt(), val );
 
     robot->SetServo(ui->leftVerticalEyeTest->checkState(), ui->leftVerticalEyeMin->text().toInt(), ui->leftVerticalEyeMax->text().toInt(), ui->leftVerticalEyePin->text().toInt(), val );
-    robot->SetServo(ui->rightVerticalEyeTest->checkState(), ui->rightVerticalEyeMin->text().toInt(), ui->rightVerticalEyeMax->text().toInt(), ui->rightVerticalEyePin->text().toInt(), val );
+    robot->SetServo(ui->rightVerticalEyeTest->checkState(), ui->rightVerticalEyeMin->text().toInt(), ui->rightVerticalEyeMax->text().toInt(), ui->rightVerticalEyePin->text().toInt(), (SERVO_MAX - val) + SERVO_MIN );
 
     robot->SetServo(ui->leftLipTest->checkState(), ui->leftLipMin->text().toInt(), ui->leftLipMax->text().toInt(), ui->leftLipPin->text().toInt(), val );
-    robot->SetServo(ui->rightLipTest->checkState(), ui->rightLipMin->text().toInt(), ui->rightLipMax->text().toInt(), ui->rightLipPin->text().toInt(), val );
+    robot->SetServo(ui->rightLipTest->checkState(), ui->rightLipMin->text().toInt(), ui->rightLipMax->text().toInt(), ui->rightLipPin->text().toInt(), (SERVO_MAX - val) + SERVO_MIN );
 
     robot->SetServo(ui->jawTest->checkState(), ui->jawMin->text().toInt(), ui->jawMax->text().toInt(), ui->jawPin->text().toInt(), val );
     robot->SetServo(ui->twistNeckTest->checkState(), ui->twistNeckMin->text().toInt(), ui->twistNeckMax->text().toInt(), ui->twistNeckPin->text().toInt(), val );
     robot->SetServo(ui->raiseNeckTest->checkState(), ui->raiseNeckMin->text().toInt(), ui->raiseNeckMax->text().toInt(), ui->raiseNeckPin->text().toInt(), val );
+
+    QString msg = QString::number(val) + "/" + QString::number((SERVO_MAX - val) + SERVO_MIN);
+    ui->textTest->setText(msg);
 }
 
 
@@ -284,29 +288,72 @@ void ConfigWindow::on_btnTestSpeech_4_clicked()
     if( ui->textToSay->text() != "" )
         msg = ui->textToSay->text();
 
-    QStringList phons = speak.TextToPhon(msg);
-    speak.TextToSpeech(msg);
-
-    QStringListIterator iterator(phons);
-    while (iterator.hasNext())
+    QStringList words= msg.split(" ",QString::SplitBehavior::KeepEmptyParts);
+    QStringListIterator wordit(words);
+    while (wordit.hasNext())
     {
-        QString shape = speak.GetMouthShape(iterator.next());
-        QPixmap pix = imageMap[shape];
-        ui->lblPicture->setPixmap(pix);
-        ui->lblPicture->repaint();
-        I::msleep(90);
+        QString word = wordit.next();
+        QStringList phons = speak.TextToPhon(word);
+        speak.TextToSpeech(word);
+
+        //qDebug() << word << " " << phons << Qt::endl;
+        QStringListIterator iterator(phons);
+        while (iterator.hasNext())
+        {
+            QString phon = iterator.next();
+            if(phon != " ")
+            {
+                QString shape = speak.GetMouthShape(phon);
+                QPixmap pix = imageMap[shape];
+                ui->lblPicture->setPixmap(pix);
+                ui->lblPicture->repaint();
+                I::msleep(90);
+            }            
+        }
+        I::msleep(4 * phons.count());
+
     }
     QPixmap pix = imageMap["sss"];
     ui->lblPicture->setPixmap(pix);
 }
 
 void ConfigWindow::on_btnTestSpeech_5_clicked()
-{
+{    
     QString msg = "Your reasoning is excellent. It's only your basic assumptions that are wrong.";
     if( ui->textToSay->text() != "" )
         msg = ui->textToSay->text();
 
-    SpeakMessage(msg);
+
+    Speak speak;
+    QStringList words= msg.split(" ",QString::SplitBehavior::KeepEmptyParts);
+    QStringListIterator wordit(words);
+    while (wordit.hasNext())
+    {
+        QString word = wordit.next();
+        QStringList phons = speak.TextToPhon(word);
+        speak.TextToSpeech(word);
+
+        qDebug() << word << " " << phons << Qt::endl;
+        QStringListIterator iterator(phons);
+        while (iterator.hasNext())
+        {
+            QString phon = iterator.next();
+            if(phon != " ")
+            {
+                QString shape = speak.GetMouthShape(phon);
+                QPixmap pix = imageMap[shape];
+                ui->lblPicture->setPixmap(pix);
+                ui->lblPicture->repaint();
+                robot->SetMouth(shape);
+                I::msleep(90);
+            }
+        }
+        I::msleep(4 * phons.count());
+
+    }
+    QPixmap pix = imageMap["sss"];
+    ui->lblPicture->setPixmap(pix);
+
 }
 
 void ConfigWindow::SpeakMessage(QString msg)
@@ -386,3 +433,41 @@ void ConfigWindow::on_btnmmm_clicked()
 }
 
 
+
+void ConfigWindow::on_btnSetPosition_clicked()
+{
+   int pinNumber = ui->pinNumber->toPlainText().toInt();
+   robot->SetServo(pinNumber,ui->servoPosition->value());
+}
+
+void ConfigWindow::on_servoPosition_valueChanged(int value)
+{
+    ui->lbServoPosition->setText(QString::number(value));
+}
+
+void ConfigWindow::on_btnSetExpression_clicked()
+{
+    // leftHorizontalEye leftVerticalEye rightHorizontalEye rightVerticalEye leftEyebrow rightEyebrow rightEyelid leftEyelid leftLip rightLip jaw neckTilt neckTwist
+    // Check each "center" text box and set the servo position
+    robot->SetServo(7,(ui->leftHorizontalEyeTrim->text().toInt()));
+    robot->SetServo(5,(ui->leftVerticalEyeTrim->text().toInt()));
+
+    robot->SetServo(8,(ui->rightHorizontalEyeTrim->text().toInt()));
+    robot->SetServo(6,(ui->rightVerticalEyeTrim->text().toInt()));
+
+    robot->SetServo(4,(ui->leftLipTrim->text().toInt()));
+    robot->SetServo(3,(ui->rightLipTrim->text().toInt()));
+
+    robot->SetServo(2,(ui->jawTrim->text().toInt()));
+
+    //robot->SetServo(8,(ui->raiseNeckTrim->text().toInt()));
+    robot->SetServo(0,(ui->twistNeckTrim->text().toInt()));
+
+    robot->SetServo(11,(ui->leftEyebrowTrim->text().toInt()));
+    robot->SetServo(12,(ui->rightEyebrowTrim->text().toInt()));
+
+    robot->SetServo(9,(ui->leftEyelidTrim->text().toInt()));
+    robot->SetServo(10,(ui->rightEyelidTrim->text().toInt()));
+    I::msleep(2000);
+    robot->ResetServo();
+}

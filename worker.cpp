@@ -13,7 +13,7 @@ void Worker::doWork()
     bool running = true;
     while(running)
     {
-        for (int i = 20; i < 160; i = i + 2)
+        for (int i = SERVO_MIN; i < SERVO_MAX; i = i + 2)
         {
             mutex.lock();
             bool abort = _abort;
@@ -33,7 +33,7 @@ void Worker::doWork()
             emit valueChanged(i);
         }
 
-        for (int i = 160; i > 20; i = i - 2)
+        for (int i = SERVO_MAX; i > SERVO_MIN; i = i - 2)
         {
             mutex.lock();
             bool abort = _abort;

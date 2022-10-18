@@ -2,7 +2,7 @@
 #define CONFIGWINDOW_H
 
 #include <QDialog>
-#include <QtSerialPort/QSerialPort>
+//#include <QtSerialPort/QSerialPort>
 #include <QMap>
 #include <QPixmap>
 
@@ -255,6 +255,12 @@ private slots:
     void on_btnfuh_clicked();
     void on_btnmmm_clicked();
 
+
+    void on_btnSetPosition_clicked();
+
+    void on_servoPosition_valueChanged(int value);
+
+    void on_btnSetExpression_clicked();
 
 private:
     void SetServo(int pin, float value, int max, int min, int trim, bool inverted = false);

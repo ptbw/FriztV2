@@ -5,6 +5,9 @@
 #include <QEventLoop>
 #include <QTimer>
 
+#define SERVO_MAX 140
+#define SERVO_MIN 30
+
 class I : public QThread
 {
 public:

@@ -3,6 +3,7 @@
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "robot.h"
 //#include "serial.h"
 #include <QThread>
 #include <QObject>
@@ -18,7 +19,9 @@ public:
     explicit Animate();
     void requestWork();
     void abort();    
-    void SpeakMessage(QString msg);
+    void MoveNeck(Robot robot,int angle,int previous);
+    void SpeakFortune(Robot robot);
+    void SpeakMessage(Robot robot, QString msg);
 
 private:
     bool _working;

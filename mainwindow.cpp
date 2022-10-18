@@ -8,7 +8,7 @@
 #include "i.h"
 
 #include <QMessageBox>
-#include <QtSerialPort/QSerialPort>
+//#include <QtSerialPort/QSerialPort>
 #include <QProcess>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -22,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent) :
     thread = new QThread();
     animate = new Animate();
 
+
 //    ranger = new Distance();
 //    ranger->moveToThread(thread);
 
@@ -30,14 +31,15 @@ MainWindow::MainWindow(QWidget *parent) :
 //    connect(thread, SIGNAL(started()), ranger, SLOT(getDistance()));
 //    connect(ranger, SIGNAL(finished()), thread, SLOT(quit()), Qt::DirectConnection);
 //    ranger->requestWork();
-
-    animationRunning = false;
+    animationRunning = false;    
+    on_volumeSlider_valueChanged(75);
 }
 
 MainWindow::~MainWindow()
 {
     if(animationRunning)
     {
+        qDebug() << "Animation stopping";
         ui->btnAnimate->setText("Animate");
         animationRunning = false;
         animate->abort();
@@ -55,12 +57,16 @@ void MainWindow::on_Stop()
 
 void MainWindow::on_actionConfig_triggered()
 {
+    if(animationRunning) return;
+
     ConfigWindow w;
     w.exec();
 }
 
 void MainWindow::on_actionAbout_triggered()
 {
+    if(animationRunning) return;
+
     AboutBox w;
     w.exec();
 }
@@ -71,71 +77,109 @@ void MainWindow::on_actionSave_triggered()
 }
 
 void MainWindow::on_actionQuit_triggered()
-{
-    Robot robot;
-    robot.ResetServo();
-
+{    
     if(animationRunning)
     {
+        qDebug() << "Animation stopping";
         ui->btnAnimate->setText("Animate");
         animationRunning = false;
         animate->abort();
     }
+
+    Robot robot;
+    robot.SetExpression("Neutral");
+    robot.ResetServo();
     QApplication::quit();
 }
 
 void MainWindow::on_comboBox_activated(const QString &arg1)
 {
+    if(animationRunning) return;
+
     Robot robot;
-    robot.SetExpression(arg1);
-    I::msleep(5000); 
+    robot.SetExpression(arg1);    
 }
 
 void MainWindow::SpeakMessage(QString msg)
 {
+    if(animationRunning) return;
+
     Robot robot;
-    robot.SpeakMessage(msg);
+    //robot.SpeakMessage(msg);
+    Speak speak;
+    QStringList words= msg.split(" ",QString::SplitBehavior::KeepEmptyParts);
+    QStringListIterator wordit(words);
+    while (wordit.hasNext())
+    {
+        QString word = wordit.next();
+        QStringList phons = speak.TextToPhon(word);
+        speak.TextToSpeech(word);
+        //qDebug() << word << " " << phons << Qt::endl;
+        QStringListIterator iterator(phons);
+        while (iterator.hasNext())
+        {
+            QString phon = iterator.next();
+            QString shape = speak.GetMouthShape(phon);
+            if(phon != " ")
+            {
+                robot.SetMouth(shape);
+                I::msleep(90);
+            }
+        }
+        I::msleep(4 * phons.count());
+    }
+    robot.SetExpression("Normal");
 }
 
 void MainWindow::on_btnHello_clicked()
 {
-    QString msg = "Hello,  My Name is Fritz";
+    if(animationRunning) return;
+
+    QString msg = "Hello My Name is Fritz";
     SpeakMessage(msg);
 }
 
 void MainWindow::on_btnAsk_clicked()
 {
+    if(animationRunning) return;
+
     QString msg = "May I tell your fortune?";
     SpeakMessage(msg);
 }
 
 void MainWindow::on_btnFortune_clicked()
 {
-    QString command("speakme");
+    if(animationRunning) return;
+
+    QString command("/usr/games/fortune");
 
     QProcess process;
-    process.start(command);
+    QStringList args = {"/usr/share/games/cookies.txt"};
+    process.start(command,args,QIODevice::ReadWrite);
     process.waitForFinished();
-
     QString output(process.readAllStandardOutput());
-    printf("%s \n",output.toStdString().c_str());
+
+    qDebug() << "Fortune: " << output;
     SpeakMessage(output);
 }
 
 void MainWindow::on_btnOkBye_clicked()
 {
+    if(animationRunning) return;
     QString msg = "Ok. Goodbye";
     SpeakMessage(msg);
 }
 
 void MainWindow::on_btnThanks_clicked()
 {
+    if(animationRunning) return;
     QString msg = "Thankyou. Goodbye";
     SpeakMessage(msg);
 }
 
 void MainWindow::on_btnLeft_clicked()
 {
+    if(animationRunning) return;
     //SetState(int n_leftHorizontalEye, int n_leftVerticalEye, int n_rightHorizontalEye, int n_rightVerticalEye, int n_leftEyebrow, int n_rightEyebrow, int n_rightEyelid, int n_leftEyelid, int n_leftLip, int n_rightLip, int n_jaw, int n_neckTilt, int n_neckTwist);
     Robot robot;
     //robot.SetState(40, -1, 40, -1, 30, 70, 100, 100, 50, 50, 50, -1, 10);
@@ -144,6 +188,7 @@ void MainWindow::on_btnLeft_clicked()
 
 void MainWindow::on_btnCentre_clicked()
 {
+    if(animationRunning) return;
     Robot robot;
     //robot.SetState(40, -1, 40, -1, 50, 50, 100, 100, 50, 50, 50, -1, 50);
     robot.SetCentre();
@@ -160,19 +205,29 @@ void MainWindow::on_btnAnimate_clicked()
 {
      if(animationRunning)
      {
+         qDebug() << "Animation stopping";
          ui->btnAnimate->setText("Animate");
          animationRunning = false;
          animate->abort();
      }
      else
      {
+         qDebug() << "Animation starting";
          ui->btnAnimate->setText("Stop Animate");
          animationRunning = true;
          animate->doWork();
-     }
+     }   
 }
 
-void MainWindow::ValueChanged(const int val)
-{
 
+void MainWindow::on_volumeSlider_valueChanged(int value)
+{
+    QString command = "amixer";
+    QStringList args = {"sset","'Speaker'",QString::number(value)};
+
+    QProcess process;
+    process.start(command,args);
+    process.waitForFinished();
+
+    ui->currentVolume->setText(QString::number(value));
 }

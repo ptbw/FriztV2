@@ -21,6 +21,7 @@ public:
     vl53l0x();
     ~vl53l0x();
 
+    int GetStatus();
     int GetDistance();
     void PrintPalError(VL53L0X_Error Status);
 };

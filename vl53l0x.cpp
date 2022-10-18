@@ -67,7 +67,7 @@ int vl53l0x::GetDistance()
 
         if(Status == VL53L0X_ERROR_NONE)
         {
-            Status = VL53L0X_GetRangingMeasurementData(pMyDevice, pRangingMeasurementData);
+            VL53L0X_GetRangingMeasurementData(pMyDevice, pRangingMeasurementData);
 
             result = pRangingMeasurementData->RangeMilliMeter;
 
@@ -87,6 +87,13 @@ void vl53l0x::PrintPalError(VL53L0X_Error Status)
     printf("API Status: %i : %s\n", Status, buf);
 }
 
+int vl53l0x::GetStatus()
+{
+    // Any non zero value is bad
+    return (int)Status;
+}
+
+
 vl53l0x::vl53l0x()
 {
     int32_t status_int;
@@ -96,8 +103,10 @@ vl53l0x::vl53l0x()
     uint8_t VhvSettings;
     uint8_t PhaseCal;
 
+    char * bus = (char *)"/dev/i2c-1";
+
     pMyDevice->I2cDevAddr      = 0x29;
-    pMyDevice->fd = VL53L0X_i2c_init("/dev/i2c-1", pMyDevice->I2cDevAddr); //choose between i2c-0 and i2c-1; On the raspberry pi zero, i2c-1 are pins 2 and 3
+    pMyDevice->fd = VL53L0X_i2c_init(bus, pMyDevice->I2cDevAddr); //choose between i2c-0 and i2c-1; On the raspberry pi zero, i2c-1 are pins 2 and 3
     if (MyDevice.fd<0) {
            Status = VL53L0X_ERROR_CONTROL_INTERFACE;
            printf ("Failed to init\n");

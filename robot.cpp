@@ -8,11 +8,10 @@ extern "C" {
 
 #include "robot.h"
 
-#define FREQUENCY 60
+#define FREQUENCY 70
 #define SERVOHATADDR 0x40
 #define SERVOMIN 500
-
-
+#define SENSOR_MAX 8192
 
 Robot::Robot()
 {    
@@ -129,15 +128,8 @@ Robot::Robot()
 
     neckTwistMin = 35;
     neckTwistMax = 165;
-    neckTwistMid = ((neckTwistMax - neckTwistMin)/2) + neckTwistMin;
+    neckTwistMid = 80;
     neckTwistPin = 0;
-
-    //sonarOutPin = 15;
-    //sonarInPin = 16;
-
-    // Prime the distance sensor
-
-
 
     map_peripheral_BCM2835(&gpio);
     map_peripheral_BCM2835(&bsc0);
@@ -161,11 +153,32 @@ Robot::Robot()
     set_servo(SERVOHATADDR, leftEyebrowPin, FREQUENCY, leftEyebrowMid);
     set_servo(SERVOHATADDR, rightEyebrowPin, FREQUENCY, rightEyebrowMid);
 
+    // Prime the distance sensor
+    //ranger = new vl53l0x();
+    VL53L0X_Error        Status = VL53L0X_ERROR_NONE;
+    //VL53L0X_Dev_t        MyDevice;
+    //VL53L0X_Dev_t        *pMyDevice = &MyDevice;
+    //VL53L0X_Version_t    Version;
+    //VL53L0X_Version_t    *pVersion   = &Version;
+    //VL53L0X_DeviceInfo_t DeviceInfo;
+
+    VL53L0X_Dev_t *pFrontSensor = &frontSensor;
+    Status = vl53l0x_init(pFrontSensor,"/dev/i2c-1" );
+    usleep(100000);
+
+    VL53L0X_StartMeasurement(pFrontSensor);
+    frontLastMeasurement = 0;
+
+    int distance = GetDistance();
+    qDebug() << "Distance: " << distance << " Status: " << Status;
+
 }
 
 Robot::~Robot()
 {
     ResetServo();
+    //delete ranger;
+    VL53L0X_i2c_close();
 }
 
 void Robot::Reset()
@@ -173,15 +186,140 @@ void Robot::Reset()
 
 }
 
+VL53L0X_Error Robot::printDistance(VL53L0X_Dev_t *pMyDevice)
+{
+    VL53L0X_Error Status = VL53L0X_ERROR_NONE;
+    VL53L0X_RangingMeasurementData_t    RangingMeasurementData;
+    Status = VL53L0X_PerformSingleRangingMeasurement(pMyDevice,
+                    &RangingMeasurementData);
+
+    if (Status != VL53L0X_ERROR_NONE) return Status;
+
+    qDebug() << "Measured distance: " << RangingMeasurementData.RangeMilliMeter;
+
+    return Status;
+}
+
+VL53L0X_Error Robot::vl53l0x_init(VL53L0X_Dev_t *pMyDevice, const char * device)
+{
+
+    VL53L0X_Error Status = VL53L0X_ERROR_NONE;
+
+    uint32_t refSpadCount;
+    uint8_t isApertureSpads;
+    uint8_t VhvSettings;
+    uint8_t PhaseCal;
+
+    pMyDevice->I2cDevAddr = 0x29;
+
+    pMyDevice->fd = VL53L0X_i2c_init((char*) device, pMyDevice->I2cDevAddr);
+    if (pMyDevice->fd<0) {
+        Status = VL53L0X_ERROR_CONTROL_INTERFACE;
+    }
+
+    if(Status == VL53L0X_ERROR_NONE)
+    {
+        Status = VL53L0X_DataInit(pMyDevice); // Data initialization
+    }
+
+    if(Status == VL53L0X_ERROR_NONE)
+    {
+        Status = VL53L0X_StaticInit(pMyDevice); // Device Initialization
+    }
+
+    if(Status == VL53L0X_ERROR_NONE)
+    {
+        Status = VL53L0X_PerformRefCalibration(pMyDevice,
+                &VhvSettings, &PhaseCal); // Device Initialization
+    }
+
+    if(Status == VL53L0X_ERROR_NONE)
+    {
+        Status = VL53L0X_PerformRefSpadManagement(pMyDevice,
+                &refSpadCount, &isApertureSpads); // Device Initialization
+    }
+
+    if(Status == VL53L0X_ERROR_NONE)
+    {
+        //Status = VL53L0X_SetDeviceMode(pMyDevice, VL53L0X_DEVICEMODE_CONTINUOUS_RANGING); // Setup in continuous ranging mode
+        Status = VL53L0X_SetDeviceMode(pMyDevice, VL53L0X_DEVICEMODE_SINGLE_RANGING);
+    }
+
+    if (Status == VL53L0X_ERROR_NONE) {
+        Status = VL53L0X_SetLimitCheckEnable(pMyDevice,
+                VL53L0X_CHECKENABLE_SIGMA_FINAL_RANGE, 1);
+    }
+    if (Status == VL53L0X_ERROR_NONE) {
+        Status = VL53L0X_SetLimitCheckEnable(pMyDevice,
+                VL53L0X_CHECKENABLE_SIGNAL_RATE_FINAL_RANGE, 1);
+    }
+
+    if (Status == VL53L0X_ERROR_NONE) {
+        Status = VL53L0X_SetLimitCheckEnable(pMyDevice,
+                VL53L0X_CHECKENABLE_RANGE_IGNORE_THRESHOLD, 1);
+    }
+
+    if (Status == VL53L0X_ERROR_NONE) {
+        Status = VL53L0X_SetLimitCheckValue(pMyDevice,
+                VL53L0X_CHECKENABLE_SIGNAL_RATE_FINAL_RANGE,
+                (FixPoint1616_t)(0.1*65536));
+    }
+    if (Status == VL53L0X_ERROR_NONE) {
+        Status = VL53L0X_SetLimitCheckValue(pMyDevice,
+                VL53L0X_CHECKENABLE_SIGMA_FINAL_RANGE,
+                (FixPoint1616_t)(60*65536));
+    }
+    if (Status == VL53L0X_ERROR_NONE) {
+        Status = VL53L0X_SetMeasurementTimingBudgetMicroSeconds(pMyDevice,
+                20000);
+    }
+
+//    if (Status == VL53L0X_ERROR_NONE) {
+//        Status = VL53L0X_SetVcselPulsePeriod(pMyDevice,
+//		        VL53L0X_VCSEL_PERIOD_PRE_RANGE, 18);
+//    }
+//    if (Status == VL53L0X_ERROR_NONE) {
+//        Status = VL53L0X_SetVcselPulsePeriod(pMyDevice,
+//		        VL53L0X_VCSEL_PERIOD_FINAL_RANGE, 14);
+//   }
+    return Status;
+}
+
+int Robot::GetDistance(VL53L0X_Dev_t sensor, int* last){
+
+    VL53L0X_Error Status = VL53L0X_ERROR_NONE;
+    VL53L0X_RangingMeasurementData_t    RangingMeasurementData;
+
+    //Status = VL53L0X_GetRangingMeasurementData(&sensor, &RangingMeasurementData);
+
+    Status = VL53L0X_PerformSingleRangingMeasurement(&sensor, &RangingMeasurementData);
+
+    if (Status != VL53L0X_ERROR_NONE) return -1;
+
+    int val = SENSOR_MAX;
+    if(RangingMeasurementData.RangeMilliMeter >= 0 && RangingMeasurementData.RangeMilliMeter <= SENSOR_MAX)
+    {
+        val =  RangingMeasurementData.RangeMilliMeter;
+    }
+
+    *last = val;
+
+    //if(*last != 0 && ((val - *last) > 300 || (val - *last) < -300)){
+    //    return *last;
+    //}
+
+    return val;
+}
 
 int Robot::GetDistance()
 {      
-     return 9999;
+   return GetDistance(frontSensor, &frontLastMeasurement);
+   //return ranger->GetDistance();
 }
 
 void Robot::SetServo(int pin, int angle)
 {
-    printf("angle: %d\n",angle);
+    // qDebug() << "Pin: " << pin << "Angle: " << angle;
     set_servo(SERVOHATADDR, pin, FREQUENCY, angle);
 }
 
@@ -211,7 +349,7 @@ void Robot::SetServo( Qt::CheckState state, int min, int max, int pin, int val)
 
     if(state == Qt::Checked)
     {
-        printf("Servo: %d, Value: %d", pin, val);
+        //printf("Servo: %d, Value: %d", pin, val);
         SetServo(pin, val);
     }    
 }
@@ -324,44 +462,66 @@ void Robot::SetState(int n_leftHorizontalEye, int n_leftVerticalEye, int n_right
     if (n_neckTwist != -1) SetServo(Qt::Checked, neckTwistMin, neckTwistMax, neckTwistPin, n_neckTwist );
     if (n_neckTilt != -1) SetServo(Qt::Checked, neckTiltMin, neckTiltMax, neckTiltPin, n_neckTilt );
     if (n_jaw != -1) SetServo(Qt::Checked, jawMin, jawMax, jawPin, n_jaw );
+    I::msleep(500);
     ResetServo();
 }
 
 void Robot::SetExpression(QString name)
-{
-    printf("%s \n",name.toStdString().c_str());
+{    
+    // qDebug() << "Set Expression: " << name;
     if (name == "Afraid")
-        SetState(70 /*leftHorizontalEye*/, 70 /*leftVerticalEye*/, 70 /*rightHorizontalEye*/, 70 /*rightVerticalEye*/, 80 /*leftEyebrow*/, 40 /*rightEyebrow*/, 70 /*rightEyelid*/, 70 /*leftEyelid*/, 110 /*leftLip*/, 70 /*rightLip*/, 20 /*jaw*/, -1 /*neckTilt*/, -1 /*neckTwist*/);
+        SetState(70 /*leftHorizontalEye*/, 65 /*leftVerticalEye*/, 70 /*rightHorizontalEye*/, 65 /*rightVerticalEye*/, 55 /*leftEyebrow*/, 95 /*rightEyebrow*/, 70 /*rightEyelid*/, 70 /*leftEyelid*/, 40 /*leftLip*/, 90 /*rightLip*/, 20 /*jaw*/, -1 /*neckTilt*/, -1 /*neckTwist*/);
     else if (name == "Awkward")
-        SetState(70 /*leftHorizontalEye*/, 48 /*leftVerticalEye*/, 70 /*rightHorizontalEye*/, 48 /*rightVerticalEye*/, 100 /*leftEyebrow*/, 100 /*rightEyebrow*/, 45 /*rightEyelid*/, 45 /*leftEyelid*/, 100 /*leftLip*/, 0 /*rightLip*/, 67 /*jaw*/, 50 /*neckTilt*/, -1 /*neckTwist*/);
+        SetState(70 /*leftHorizontalEye*/, 65 /*leftVerticalEye*/, 70 /*rightHorizontalEye*/, 48 /*rightVerticalEye*/, 40 /*leftEyebrow*/, 100 /*rightEyebrow*/, 90 /*rightEyelid*/, 90 /*leftEyelid*/, 80 /*leftLip*/, 60 /*rightLip*/, 50 /*jaw*/, 50 /*neckTilt*/, -1 /*neckTwist*/);
     else if (name == "Angry")
-        SetState(70 /*leftHorizontalEye*/, 50 /*leftVerticalEye*/, 70 /*rightHorizontalEye*/, 50 /*rightVerticalEye*/, 1 /*leftEyebrow*/, 9 /*rightEyebrow*/, 40 /*rightEyelid*/, 40 /*leftEyelid*/, 22 /*leftLip*/, 77 /*rightLip*/, 0 /*jaw*/, 33 /*neckTilt*/, -1 /*neckTwist*/);
+        SetState(70 /*leftHorizontalEye*/, 65 /*leftVerticalEye*/, 70 /*rightHorizontalEye*/, 48 /*rightVerticalEye*/, 90 /*leftEyebrow*/, 40 /*rightEyebrow*/, 65 /*rightEyelid*/, 70 /*leftEyelid*/, 20 /*leftLip*/, 40 /*rightLip*/, 120 /*jaw*/, 33 /*neckTilt*/, -1 /*neckTwist*/);
     else if (name == "Disappointed")
-        SetState(70 /*leftHorizontalEye*/, 78 /*leftVerticalEye*/, 70 /*rightHorizontalEye*/, 78 /*rightVerticalEye*/, 44 /*leftEyebrow*/, 43 /*rightEyebrow*/, 7 /*rightEyelid*/, 7 /*leftEyelid*/, 31 /*leftLip*/, 68 /*rightLip*/, 0 /*jaw*/, 17 /*neckTilt*/, -1 /*neckTwist*/);
+        SetState(90 /*leftHorizontalEye*/, 90 /*leftVerticalEye*/, 90 /*rightHorizontalEye*/, 40 /*rightVerticalEye*/, 40 /*leftEyebrow*/, 100 /*rightEyebrow*/, 90 /*rightEyelid*/, 90 /*leftEyelid*/, 40 /*leftLip*/, 100 /*rightLip*/, 90 /*jaw*/, 17 /*neckTilt*/, -1 /*neckTwist*/);
     else if (name == "Happy")
-        SetState(70 /*leftHorizontalEye*/, 56 /*leftVerticalEye*/, 70 /*rightHorizontalEye*/, 56 /*rightVerticalEye*/, 76 /*leftEyebrow*/, 66 /*rightEyebrow*/, 40 /*rightEyelid*/, 40 /*leftEyelid*/, 5 /*leftLip*/, 95 /*rightLip*/, 10 /*jaw*/, 50 /*neckTilt*/, -1 /*neckTwist*/);
+        SetState(80 /*leftHorizontalEye*/, 90 /*leftVerticalEye*/, 90 /*rightHorizontalEye*/, 40 /*rightVerticalEye*/, 60 /*leftEyebrow*/, 80 /*rightEyebrow*/,
+                 70 /*rightEyelid*/,70 /*leftEyelid*/, 40 /*leftLip*/, 100 /*rightLip*/, 75 /*jaw*/, 50 /*neckTilt*/, -1 /*neckTwist*/);
+
+
     else if (name == "Neutral")
-        SetState(70 /*leftHorizontalEye*/, 90 /*leftVerticalEye*/, 70 /* rightHorizontalEye*/, 90 /*rightVerticalEye*/, 90 /*leftEyebrow*/, 90 /*rightEyebrow*/, 90 /*rightEyelid*/, 90 /*leftEyelid*/, 90 /*leftLip*/, 90 /*rightLip*/, 90 /*jaw*/, 90 /*neckTilt*/, 90 /*neckTwist*/);
-    else if (name == "Sad")
-        SetState(70 /*leftHorizontalEye*/, 64 /*leftVerticalEye*/, 70 /*rightHorizontalEye*/, 64 /*rightVerticalEye*/, 10 /*leftEyebrow*/, 90 /*rightEyebrow*/, 57 /*rightEyelid*/, 57 /*leftEyelid*/, 95 /*leftLip*/, 5 /*rightLip*/, 90 /*jaw*/, 50 /*neckTilt*/, -1 /*neckTwist*/);
+        SetState(80 /*leftHorizontalEye*/, 65 /*leftVerticalEye*/, 70 /* rightHorizontalEye*/, 65 /*rightVerticalEye*/, 70 /*leftEyebrow*/, 80 /*rightEyebrow*/, 70 /*rightEyelid*/, 70 /*leftEyelid*/, 75 /*leftLip*/, 65 /*rightLip*/, 130 /*jaw*/, -1 /*neckTilt*/, -1 /*neckTwist*/);
+
+    else if (name == "Sad")    
+        SetState(90 /*leftHorizontalEye*/, 90 /*leftVerticalEye*/, 90 /*rightHorizontalEye*/, 40 /*rightVerticalEye*/, 40 /*leftEyebrow*/, 100 /*rightEyebrow*/,
+                 90 /*rightEyelid*/, 90 /*leftEyelid*/, 40 /*leftLip*/, 100 /*rightLip*/, 90 /*jaw*/, 17 /*neckTilt*/, -1 /*neckTwist*/);
+
     else if (name == "Sinister")
-        SetState(70 /*leftHorizontalEye*/, 44 /*leftVerticalEye*/, 70 /*rightHorizontalEye*/, 44 /*rightVerticalEye*/, 7 /*leftEyebrow*/, 6 /*rightEyebrow*/, 6 /*rightEyelid*/, 6 /*leftEyelid*/, 70 /*leftLip*/, 29 /*rightLip*/, 67 /*jaw*/, 50 /*neckTilt*/, -1.0 /*neckTwist*/);
+        SetState(90 /*leftHorizontalEye*/, 80 /*leftVerticalEye*/, 90 /*rightHorizontalEye*/, 60 /*rightVerticalEye*/, 50 /*leftEyebrow*/, 90 /*rightEyebrow*/,
+                 60 /*rightEyelid*/, 70 /*leftEyelid*/, 90 /*leftLip*/, 60 /*rightLip*/, 120 /*jaw*/, 50 /*neckTilt*/, -1.0 /*neckTwist*/);
+
     else if (name == "Sleepy")
-        SetState(70 /*leftHorizontalEye*/, 70 /*leftVerticalEye*/, 70 /*rightHorizontalEye*/, 70 /*rightVerticalEye*/, 90 /*leftEyebrow*/, 10 /*rightEyebrow*/, 10 /*rightEyelid*/, 10 /*leftEyelid*/, 25 /*leftLip*/, 75 /*rightLip*/, 100 /*jaw*/, 30 /*neckTilt*/, -1.0 /*neckTwist*/);
+        SetState(90 /*leftHorizontalEye*/, 80 /*leftVerticalEye*/, 90 /*rightHorizontalEye*/, 60 /*rightVerticalEye*/, 40 /*leftEyebrow*/, 100 /*rightEyebrow*/,
+                 55 /*rightEyelid*/, 60 /*leftEyelid*/, 50 /*leftLip*/, 80 /*rightLip*/, 120 /*jaw*/, 30 /*neckTilt*/, -1.0 /*neckTwist*/);
+
     else if (name == "Smile")
-        SetState(70 /*leftHorizontalEye*/, 56 /*leftVerticalEye*/, 70 /*rightHorizontalEye*/, 56 /*rightVerticalEye*/, 59 /*leftEyebrow*/, 58 /*rightEyebrow*/, 7 /*rightEyelid*/, 7 /*leftEyelid*/, 100 /*leftLip*/, 0 /*rightLip*/, 0 /*jaw*/, 50 /*neckTilt*/, -1.0 /*neckTwist*/);
+        SetState(80 /*leftHorizontalEye*/, 90 /*leftVerticalEye*/, 90 /*rightHorizontalEye*/, 40 /*rightVerticalEye*/, 60 /*leftEyebrow*/, 80 /*rightEyebrow*/,
+                 70 /*rightEyelid*/,70 /*leftEyelid*/, 40 /*leftLip*/, 100 /*rightLip*/, 75 /*jaw*/, 50 /*neckTilt*/, -1 /*neckTwist*/);
+
     else if (name == "Sneaky")
         SetState(70 /*leftHorizontalEye*/, 30 /*leftVerticalEye*/, 70 /*rightHorizontalEye*/, 30 /*rightVerticalEye*/, 58 /*leftEyebrow*/, 51 /*rightEyebrow*/, 26 /*rightEyelid*/, 26 /*leftEyelid*/, 0 /*leftLip*/, 0 /*rightLip*/, 92/*jaw*/, 50 /*neckTilt*/, -1.0 /*neckTwist*/);
+
     else if (name == "Sulk")
         SetState(70 /*leftHorizontalEye*/, 60 /*leftVerticalEye*/, 70 /*rightHorizontalEye*/, 61 /*rightVerticalEye*/, 33 /*leftEyebrow*/, 32 /*rightEyebrow*/, 76 /*rightEyelid*/, 76 /*leftEyelid*/, 17 /*leftLip*/, 36 /*rightLip*/, 0 /*jaw*/, 50 /*neckTilt*/, -1.0 /*neckTwist*/);
+
     else if (name == "Surprised")
-        SetState(70 /*leftHorizontalEye*/, 47 /*leftVerticalEye*/, 70 /*rightHorizontalEye*/, 47 /*rightVerticalEye*/, 10 /*leftEyebrow*/, 90 /*rightEyebrow*/, 100 /*rightEyelid*/, 100 /*leftEyelid*/, 25 /*leftLip*/, 71 /*rightLip*/, 0 /*jaw*/, 50 /*neckTilt*/, -1.0 /*neckTwist*/);
+        SetState(80 /*leftHorizontalEye*/, 80 /*leftVerticalEye*/, 80 /*rightHorizontalEye*/, 60 /*rightVerticalEye*/,
+                 96 /*leftEyebrow*/, 46 /*rightEyebrow*/, 90 /*rightEyelid*/, 90 /*leftEyelid*/, 100 /*leftLip*/, 40 /*rightLip*/,
+                 60 /*jaw*/, 50 /*neckTilt*/, -1.0 /*neckTwist*/);
+
     else if (name == "Yelling")
-        SetState(70 /*leftHorizontalEye*/, 50 /*leftVerticalEye*/, 70 /*rightHorizontalEye*/, 50 /*rightVerticalEye*/, 10 /*leftEyebrow*/, 9 /*rightEyebrow*/, 40 /*rightEyelid*/, 4 /*leftEyelid*/, 22 /*leftLip*/, 77 /*rightLip*/, 100 /*jaw*/, 33 /*neckTilt*/, -1.0 /*neckTwist*/);
+        SetState(70 /*leftHorizontalEye*/, 50 /*leftVerticalEye*/, 70 /*rightHorizontalEye*/, 50 /*rightVerticalEye*/,
+                 10 /*leftEyebrow*/, 9 /*rightEyebrow*/, 40 /*rightEyelid*/, 4 /*leftEyelid*/, 22 /*leftLip*/, 77 /*rightLip*/,
+                 100 /*jaw*/, 33 /*neckTilt*/, -1.0 /*neckTwist*/);
+
     else if (name == "Worried")
-        SetState(70 /*leftHorizontalEye*/, 37 /*leftVerticalEye*/, 70 /*rightHorizontalEye*/, 37 /*rightVerticalEye*/, 80 /*leftEyebrow*/, 80 /*rightEyebrow*/, 7 /*rightEyelid*/, 7 /*leftEyelid*/, 18 /*leftLip*/, 81 /*rightLip*/, 50 /*jaw*/, 67 /*neckTilt*/, -1.0 /*neckTwist*/);
-    else
-        SetState(50 /*leftHorizontalEye*/, 90 /*leftVerticalEye*/, 90 /* rightHorizontalEye*/, 90 /*rightVerticalEye*/, 90 /*leftEyebrow*/, 90 /*rightEyebrow*/, 90 /*rightEyelid*/, 90 /*leftEyelid*/, 90 /*leftLip*/, 90 /*rightLip*/, 90 /*jaw*/, 90 /*neckTilt*/, 90 /*neckTwist*/);
+        SetState(80 /*leftHorizontalEye*/, 100 /*leftVerticalEye*/, 80 /*rightHorizontalEye*/, 50 /*rightVerticalEye*/, 40 /*leftEyebrow*/, 100 /*rightEyebrow*/, 110 /*rightEyelid*/, 110 /*leftEyelid*/, 50 /*leftLip*/, 90 /*rightLip*/, 50 /*jaw*/, 67 /*neckTilt*/, -1.0 /*neckTwist*/);
+
+    else /* Normal */
+        SetState(70 /*leftHorizontalEye*/, 65 /*leftVerticalEye*/, 70 /* rightHorizontalEye*/, 65 /*rightVerticalEye*/, 70 /*leftEyebrow*/, 80 /*rightEyebrow*/, 70 /*rightEyelid*/, 70 /*leftEyelid*/, 75 /*leftLip*/, 65 /*rightLip*/, 130 /*jaw*/, -1 /*neckTilt*/, 85 /*neckTwist*/);
 
     //EditState(GetFinalState());
 }
@@ -384,7 +544,7 @@ void Robot::SetExpression(int e)
     else if (e == 13) SetExpression("Yelling");
     else if (e == 14) SetExpression("Worried");
     else
-        SetExpression("Normal");
+        SetExpression("Neutral");
 }
 
 void Robot::SetExpression()

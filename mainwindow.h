@@ -85,7 +85,13 @@ private slots:
 
     void on_btnAnimate_clicked();
 
-    void ValueChanged(const int val);
+    //void ValueChanged(const int val);
+
+    void on_volumeSlider_valueChanged(int value);
+
+//    void on_btnSetPosition_clicked();
+
+//    void on_servoPosition_valueChanged(int value);
 
 private:
     Ui::MainWindow *ui;

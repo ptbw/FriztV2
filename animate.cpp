@@ -4,9 +4,21 @@
 #include "speak.h"
 #include <QProcess>
 
-#define MINDISTANCE 300
-#define MINANGLE 40
-#define MAXANGLE 140
+#define MINDISTANCE 600
+#define MINANGLE 60  // 80, 110, 140
+#define MAXANGLE 120
+#define STEP 2
+
+
+enum ConvState {
+    Idle,
+    Hello,
+    WhatsYourName,
+    PleaseToMeetYou,
+    AskFortune,
+    ReplyFortune,
+    GoodBye
+};
 
 Animate::Animate() :
     QObject(0)
@@ -33,59 +45,81 @@ void Animate::doWork()
     int dir = 1;
     int angle = MINANGLE;
 
-    _working = false;
+    //_working = false;
     _abort = false;
 
     int sonar = 0;
+    ConvState state = Idle;
     bool running = true;
     Robot robot;
     sonar = robot.GetDistance();
-    robot.SetCentre();
+    //qDebug() << "Distance: " << sonar;
+    MoveNeck(robot,angle,angle);
     I::msleep(500);
 
+    // Neutral expression
+    robot.SetExpression("Neutral");
 
     while(running)
     {
-        mutex.lock();
+
         sonar = robot.GetDistance();
+        //qDebug() << "Distance: " << sonar;
+        mutex.lock();
         running = !_abort;
         mutex.unlock();
-        I::msleep(200);
+        I::msleep(5);
 
 
-        if(sonar <= MINDISTANCE)
+        if(sonar >= 0 && sonar <= MINDISTANCE && state < GoodBye)
         {
-            mutex.lock();
-            robot.SetExpression();
-            I::msleep(1000);
-            SpeakMessage("Hello my name is Fritz");
 
-            I::msleep(1000);
-            QString command = "fortune cookies.txt";
-            QProcess process;
-            process.start(command);
-            process.waitForFinished();
-            QString output(process.readAllStandardOutput());
-            SpeakMessage(output);
-            qWarning() << output;
-
-            mutex.unlock();
-            I::msleep(2000);
+            state = (ConvState)(state + 1);
         }
         else
         {
-           angle = angle + (5 * dir);
-           if( angle >= MAXANGLE || angle <= MINANGLE )
-           {
+            if(state > Hello)
+            {
+               SpeakMessage(robot, "Good bye");
+               I::msleep(1000);
+            }
+            state = Idle;
+            int previous = angle;
+            angle = angle + (STEP * dir);
+            if( angle >= MAXANGLE || angle <= MINANGLE )
+            {
                dir = dir * -1;
-           }
-           mutex.lock();
-           robot.SetNeck(angle);
-           mutex.unlock();
+            }
+            MoveNeck(robot,angle,previous);
         }
-     }
-    robot.SetCentre();
-    robot.ResetServo();
+        if(state == Hello)
+        {
+            SpeakMessage(robot, "Hello my name is Fritz");
+            I::msleep(1000);            
+        }
+        if(state == WhatsYourName)
+        {
+            SpeakMessage(robot, "What is your name?");
+            I::msleep(2000);
+        }
+        if(state == PleaseToMeetYou)
+        {
+            SpeakMessage(robot, "Pleased to meet you");
+            I::msleep(2000);
+        }
+        if(state == AskFortune)
+        {
+            SpeakMessage(robot, "Can I tell your fortune");
+            I::msleep(2000);
+        }
+        if(state == ReplyFortune)
+        {
+            SpeakFortune(robot);
+            I::msleep(2000);
+        }
+    }
+    robot.SetExpression("Neutral");
+    I::msleep(2000);
 
     emit done();
     emit finished();
@@ -126,7 +160,7 @@ void Animate::doWorkOld()
             if(sonar <= 40.0 && sonar != previous)
             {
                 QString msg = text.at(value);
-                SpeakMessage(msg);
+                SpeakMessage(robot, msg);
                 I::sleep(10);
                 previous = sonar;
             }
@@ -146,19 +180,78 @@ void Animate::doWorkOld()
     emit finished();
 }
 
-void Animate::SpeakMessage(QString msg)
+void Animate::MoveNeck(Robot robot,int angle,int previous)
 {
-    //Speak speak;
-    Robot robot;
 
-    robot.SpeakMessage(msg);
-    return;
+    //qDebug() << "Angle: " << angle << " Prev: " << previous;
+    robot.SetNeck(angle);
+
+//    if(angle > previous)
+//    {
+//        int a = previous;
+//        while( a <= angle)
+//        {
+//            a = a + 1 + ((angle - a)/2);
+//            qDebug() << "SetNeck: " << a ;
+//            robot.SetNeck(a);
+//        }
+//     }
+//    else
+//    {
+//        int a = previous;
+//        while( a >= angle)
+//        {
+//            a = a - 1 - ((a - angle)/2);
+//            qDebug() << "SetNeck: " << a ;
+//            robot.SetNeck(a);
+//        }
+//    }
+}
+
+void Animate::SpeakFortune(Robot robot)
+{
+    QString command("/usr/games/fortune");
+
+    QProcess process;
+    QStringList args = {"/usr/share/games/cookies.txt"};
+    process.start(command,args,QIODevice::ReadWrite);
+    process.waitForFinished();
+    QString output(process.readAllStandardOutput());
+
+    qDebug() << "Fortune: " << output;
+    SpeakMessage(robot, output);
+}
+
+void Animate::SpeakMessage(Robot robot, QString msg)
+{
+    Speak speak;
+    QStringList words= msg.split(" ",QString::SplitBehavior::KeepEmptyParts);
+    QStringListIterator wordit(words);
+    while (wordit.hasNext())
+    {
+        QString word = wordit.next();
+        QStringList phons = speak.TextToPhon(word);
+        speak.TextToSpeech(word);
+        //qDebug() << word << " " << phons << Qt::endl;
+        QStringListIterator iterator(phons);
+        while (iterator.hasNext())
+        {
+            QString phon = iterator.next();
+            QString shape = speak.GetMouthShape(phon);
+            if(phon != " ")
+            {
+                robot.SetMouth(shape);
+                I::msleep(90);
+            }
+        }
+        I::msleep(4 * phons.count());
+    }
 }
 
 void Animate::requestWork()
 {
     mutex.lock();
-    _working = true;
+    //_working = true;
     _abort = false;
     mutex.unlock();
 
@@ -167,10 +260,11 @@ void Animate::requestWork()
 
 void Animate::abort()
 {
+    qDebug() << "Animation aborting";
     mutex.lock();
-    _working = false;
     _abort = true;
     mutex.unlock();
+    qDebug() << "Animation aborted";
 }
 
 
