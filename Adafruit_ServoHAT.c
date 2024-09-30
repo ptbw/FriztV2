@@ -4,19 +4,26 @@
 #include "Adafruit_ServoHAT.h"
 
 
-int angleToPulseLengthLookupTable[181];
+int angleToPulseLengthLookupTable[1810];
 
 void init_angle_to_pulse_length_lookup_table(){
+    // slope = (outputend - outputstart) / (inputend - inputstart)
+    //       = (2500 - 500) / (1800 - 0)
+    double slope = 1.0 * (2000.0/1800.0);
+
 	int i;
-	for (i = 0; i < 181; i++){
+    for (i = 0; i < 1810; i++){
 		// 0 -> 500, 180 -> 2500, 90 -> 1500
-		angleToPulseLengthLookupTable[i] = (int)(500 + i * 11.1111111+0.5);
+        //angleToPulseLengthLookupTable[i] = (int)(500 + i * 11.11111111+0.5);
+        // 0 -> 500, 1800 -> 2500, 900 -> 1500
+        angleToPulseLengthLookupTable[i] = (int)(500 + (slope * i));
 	}
-    //printf("******Angle To Duty Cycle Lookup Table******\n");
-    //printf("Index\tAngle\tPulse Length\t\n");
-    //for (i = 0; i < 181; i++){
-        //printf("%d\t%d\t%d\n", i, i, angleToPulseLengthLookupTable[i]);
-    //}
+    printf("******Angle To Duty Cycle Lookup Table******\n");
+    printf("Index\tAngle\tPulse Length\t\n");
+    for (i = 0; i < 1810; i+=900){
+        double angle = (1.0 * i) / 10.0 ;
+        printf("%d\t%f\t%d\n", i, angle, angleToPulseLengthLookupTable[i]);
+    }
 }
 
 
@@ -29,13 +36,16 @@ int pulse_length_to_tick_converter(int frequency, int pulseLength){
 	return ((int)tick);
 }
 
-void set_servo(uint8_t hwAddress, uint8_t pwmChannel, int frequency, int angleDegree){
-    if(angleDegree < 5 || angleDegree > 175){
-		printf("angle %d is out of servo range. Exit....\n", angleDegree);
+void set_servo(uint8_t hwAddress, uint8_t pwmChannel, int frequency, double angleDegree){
+    if(angleDegree < 5.0 || angleDegree > 175.0){
+        printf("angle %.2f is out of servo range. Exit....\n", angleDegree);
         //exit(1);
         return;
 	}
-	int pulseLength = angleToPulseLengthLookupTable[angleDegree];
+
+    int key = (int)(angleDegree * 10);
+    //printf("Angle = %.2f Key = %d \n", angleDegree, key);
+    int pulseLength = angleToPulseLengthLookupTable[key];
 	uint16_t offTime = (uint16_t)pulse_length_to_tick_converter(frequency, pulseLength);
 	set_PWM_PCA9685(hwAddress, pwmChannel, 0, offTime);	
 }

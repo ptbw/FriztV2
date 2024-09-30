@@ -104,6 +104,8 @@ void MainWindow::SpeakMessage(QString msg)
 {
     if(animationRunning) return;
 
+    msg = msg.replace("\n","");
+
     Robot robot;
     //robot.SpeakMessage(msg);
     Speak speak;
@@ -123,7 +125,7 @@ void MainWindow::SpeakMessage(QString msg)
             if(phon != " ")
             {
                 robot.SetMouth(shape);
-                I::msleep(90);
+                //I::msleep(90);
             }
         }
         I::msleep(4 * phons.count());
@@ -215,7 +217,7 @@ void MainWindow::on_btnAnimate_clicked()
          qDebug() << "Animation starting";
          ui->btnAnimate->setText("Stop Animate");
          animationRunning = true;
-         animate->doWork();
+         animate->doWorkOld();
      }   
 }
 

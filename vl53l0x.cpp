@@ -187,7 +187,7 @@ vl53l0x::vl53l0x()
    {
 
        printf ("Call of VL53L0X_SetDeviceMode\n");
-       Status = VL53L0X_SetDeviceMode(pMyDevice, VL53L0X_DEVICEMODE_CONTINUOUS_RANGING); // Setup in single ranging mode
+       Status = VL53L0X_SetDeviceMode(pMyDevice, VL53L0X_DEVICEMODE_SINGLE_RANGING); // Setup in single ranging mode
        PrintPalError(Status);
    }
 

@@ -6,6 +6,7 @@
 
  Speak::Speak()
 {
+    speaking = false;
     /* ' = pause */
 
     /* Vowel sounds */
@@ -137,7 +138,7 @@
         {
             if(p.lips == "")
             {
-                qDebug() << phon << " Bad Mapping" << endl;
+                qDebug() << phon << " Bad Mapping" << Qt::endl;
                 return "aa";
             }
             return p.lips;
@@ -152,8 +153,10 @@
      QString command = "espeak -s160 -k20 -ven-uk-rp -q --ipa=1 ";  // Was ipa=3 but stopped working at some point and was replaced with _
      command.append('"').append(text).append('"');
 
+     QStringList args;
+
      QProcess process;
-     process.start(command);
+     process.start(command,args);
      process.waitForFinished();
      QString result(process.readAllStandardOutput());
      result.remove("\n");
@@ -165,7 +168,8 @@
 
 
 int Speak::TextToSpeech(QString text)
-{
+{    
+    qDebug() << text;
     TextToWave(text);
     PlayWave();
     return 0;
@@ -180,25 +184,87 @@ int Speak::TextToSpeech(QString text)
 
 int Speak::TextToWave(QString text)
 {
-    QString command = "espeak -s150 -k20 -ven-uk-rp -w /tmp/out.wav ";
-    command.append('"').append(text).append('"');
+// rev 1
+//    QString command = "espeak -s150 -k20 -ven-uk-rp -w /tmp/out.wav ";
+//    command.append('"').append(text).append('"');
+
+// rev 2
+//      QString command = "espeak";
+//      QString arg;
+//      arg = arg.append('"').append(text).append('"');
+//      QStringList args = {"-s150","-k20","-ven-uk-rp","-w /tmp/out.wav", arg };
+
+// rev 3
+//    QProcess process;
+//    process.setStandardOutputFile(QProcess::nullDevice());
+//    process.setStandardErrorFile(QProcess::nullDevice());
+//    process.start(command,args);
+//    process.waitForFinished();
+
+//    QProcess process1;
+//    QProcess process2;
+
+//    QString command1 = "echo";
+//    QString arg1;
+//    arg1 = arg1.append('"').append(text).append('"');
+//    QStringList args1 = {arg1};
+
+//    QString command2 = "/home/philw/piper/piper/piper";
+//    QStringList args2 = {"--model /home/philw/piper/piper/en_GB-alan-medium.onnx", "--output_file /tmp/out.wav"};
+//    process1.setStandardOutputProcess(&process2);
+
+//    process1.start(command1, args1);
+//    process2.start(command2, args2);
+//    process2.setProcessChannelMode(QProcess::ForwardedChannels);
+
+//    // Wait for it to start
+//    if(!process1.waitForStarted())
+//        return 0;
+
+//    bool retval = false;
+//    QByteArray buffer;
+//    while ((retval = process2.waitForFinished()))
+//        buffer.append(process2.readAll());
+
+// rev 4
+    // /bin/sh -c 'echo Fritz | /home/philw/piper/piper/piper --model /home/philw/piper/piper/en_GB-alan-medium.onnx --output_file /tmp/out.wav'
+    QString command = "/bin/sh";
+    QString arg1;
+    arg1 = arg1.append("-c");
+    QString arg2;
+    arg2 = arg2
+            .append("echo ")
+            .append(text)
+            .append(" | /home/philw/piper/piper/piper ")
+            .append("--model /home/philw/piper/piper/en_GB-alan-medium.onnx --output_file /tmp/out.wav");
+
+    QStringList args = {arg1, arg2};
+
+    qDebug() << "Command" << command << " " << arg1 << " "<< arg2;
 
     QProcess process;
     process.setStandardOutputFile(QProcess::nullDevice());
     process.setStandardErrorFile(QProcess::nullDevice());
-    process.start(command);
+    process.start(command,args);
     process.waitForFinished();
+
 
     return 0;
 }
 
 int Speak::PlayWave()
 {
+    doWork();
+    return 0;
+}
+
+void Speak::doWork()
+{
     QString command = "aplay";
     QProcess process;
     QStringList args = {"-q","/tmp/out.wav"};
     process.setStandardOutputFile(QProcess::nullDevice());
     process.setStandardErrorFile(QProcess::nullDevice());
-    process.startDetached(command,args);
-    return 0;
+    process.start(command,args);
+    process.waitForFinished();
 }

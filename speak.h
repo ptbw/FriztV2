@@ -16,6 +16,8 @@ class Speak
 private:
     QVector<phono> phonos;
 
+    bool speaking;
+
 public:
     Speak();
 
@@ -24,6 +26,7 @@ public:
     int TextToSpeech(QString text);
     int TextToWave(QString text);
     int PlayWave();
+    void doWork();
 };
 
 #endif // SPEAK_H

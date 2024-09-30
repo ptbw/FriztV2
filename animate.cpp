@@ -4,7 +4,7 @@
 #include "speak.h"
 #include <QProcess>
 
-#define MINDISTANCE 600
+#define MINDISTANCE 500
 #define MINANGLE 60  // 80, 110, 140
 #define MAXANGLE 120
 #define STEP 2
@@ -17,7 +17,8 @@ enum ConvState {
     PleaseToMeetYou,
     AskFortune,
     ReplyFortune,
-    GoodBye
+    GoodBye,
+    Exit
 };
 
 Animate::Animate() :
@@ -68,7 +69,7 @@ void Animate::doWork()
         mutex.lock();
         running = !_abort;
         mutex.unlock();
-        I::msleep(5);
+        I::msleep(500);
 
 
         if(sonar >= 0 && sonar <= MINDISTANCE && state < GoodBye)
@@ -117,6 +118,11 @@ void Animate::doWork()
             SpeakFortune(robot);
             I::msleep(2000);
         }
+        if(state == GoodBye)
+        {
+           SpeakMessage(robot, "Good bye");
+           I::msleep(1000);
+        }
     }
     robot.SetExpression("Neutral");
     I::msleep(2000);
@@ -127,55 +133,57 @@ void Animate::doWork()
 
 void Animate::doWorkOld()
 {
-    Robot robot;
-    QTime time = QTime::currentTime();
-    qsrand((uint)time.msec());
-
     int dir = 1;
-    int angle = 10;
-    double previous = 9999;
-    //robot.SetCentre();
-    //robot.SetNeck(angle);
+    int angle = MINANGLE;
 
+    //_working = false;
+    _abort = false;
+
+    int sonar = 0;
+    ConvState state = Hello;
     bool running = true;
-    while(running)
+    Robot robot;
+
+    // Neutral expression
+    robot.SetExpression("Neutral");
+
+    while(state != Exit)
     {
-        mutex.lock();
-        bool abort = _abort;
-        mutex.unlock();
-        if (abort)
+        if(state == Hello)
         {
-            running = false;
-            break;
+            SpeakMessage(robot, "Hello my name is Fritz");
+            I::msleep(1000);
         }
-
-        int value = (int)(qrand() % 10);
-        mutex.lock();
-        double sonar = 0; //robot.GetSonar();
-        //qWarning() << "Sonar: " << sonar << endl;
-        mutex.unlock();
-
-        //if( sonar < 9999)
-        //{
-            if(sonar <= 40.0 && sonar != previous)
-            {
-                QString msg = text.at(value);
-                SpeakMessage(robot, msg);
-                I::sleep(10);
-                previous = sonar;
-            }
-            if(sonar > 40)
-            {
-               angle = angle + (5 * dir);
-               if( angle >= 90 || angle <= 10 )
-               {
-                   dir = dir * -1;
-               }
-               //robot.SetNeck(angle);
-               I::msleep(500);
-           //}
+        if(state == WhatsYourName)
+        {
+            SpeakMessage(robot, "What is your name?");
+            I::msleep(2000);
         }
+        if(state == PleaseToMeetYou)
+        {
+            SpeakMessage(robot, "Pleased to meet you");
+            I::msleep(2000);
+        }
+        if(state == AskFortune)
+        {
+            SpeakMessage(robot, "Can I tell your fortune");
+            I::msleep(2000);
+        }
+        if(state == ReplyFortune)
+        {
+            SpeakFortune(robot);
+            I::msleep(2000);
+        }
+        if(state == GoodBye)
+        {
+           SpeakMessage(robot, "Good bye");
+           I::msleep(1000);
+        }
+        state = (ConvState)(state + 1);
     }
+    robot.SetExpression("Neutral");
+    I::msleep(2000);
+
     emit done();
     emit finished();
 }
