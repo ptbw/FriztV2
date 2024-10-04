@@ -6,6 +6,9 @@
 
  Speak::Speak()
 {
+
+     // See https://en.wikipedia.org/wiki/Help:Pronunciation_respelling_key
+
     speaking = false;
     /* ' = pause */
 
@@ -22,7 +25,7 @@
 
     phono aa;              // father
     aa.ipa = "ɑː";
-    a.lips = "aa";
+    aa.lips = "aa";
     phonos.append(aa);
 
     phono e;               // better
@@ -125,6 +128,12 @@
     v.lips = "fuh";
     phonos.append(v);
 
+    phono sh;
+    v.ipa = "ʃ";         // vuh
+    v.lips = "fuh";
+    phonos.append(v);
+
+
 }
 
  QString Speak::GetMouthShape(QString phon)
@@ -145,44 +154,57 @@
         }
      }
 
-     return "sss";
+     return "s";
  }
 
  QStringList Speak::TextToPhon(QString text)
  {
-     QString command = "espeak -s160 -k20 -ven-uk-rp -q --ipa=1 ";  // Was ipa=3 but stopped working at some point and was replaced with _
-     command.append('"').append(text).append('"');
+     QString command = "espeak -s160 -k20 -ven-uk-rp -q --sep=_ --ipa ";
+     command = command.append(text);
+     //qDebug() << "Command: " << command << Qt::endl;
 
-     QStringList args;
+     /*
+     QString command = "espeak";
+     QStringList args = {"-s160" ," -k20" ,"-ven-uk-rp", "-q", "--ipa", text};
+
+     qDebug() << "Command: " << command << args << Qt::endl;
 
      QProcess process;
-     process.start(command,args);
+     process.start(command,args);     
+     process.waitForFinished();     
+     */
+     QProcess process;
+     process.start(command);
      process.waitForFinished();
+
      QString result(process.readAllStandardOutput());
+
+     //qDebug() << "Result before: " << result;
      result.remove("\n");
      result.replace("ˈ"," ");
-     result.replace(" ","_ _");     
-     QStringList results = result.split("_",QString::SkipEmptyParts);
+     result.replace(" ","_ _");
+     //qDebug() << "Result after: " << result;
+
+     QStringList results = result.split("_",Qt::SkipEmptyParts);
      return results;
  }
 
-
 int Speak::TextToSpeech(QString text)
-{    
-    qDebug() << text;
-    TextToWave(text);
-    PlayWave();
+{        
+    TextToWave(text,1);
+    PlayWave(1);
     return 0;
 
 //    QString command = "espeak -s130 -k20 -ven-uk-rp --stdout  ";
-//    command.append('"').append(teGetMouthShapext).append('"').append(" | aplay");
+//    command.append('"').append(text).append('"').append(" | aplay");
 
 //    QProcess process;
 //    process.startDetached(command);
 //    return 0;
 }
 
-int Speak::TextToWave(QString text)
+
+int Speak::TextToWave(QString text, int counter)
 {
 // rev 1
 //    QString command = "espeak -s150 -k20 -ven-uk-rp -w /tmp/out.wav ";
@@ -227,44 +249,61 @@ int Speak::TextToWave(QString text)
 //        buffer.append(process2.readAll());
 
 // rev 4
-    // /bin/sh -c 'echo Fritz | /home/philw/piper/piper/piper --model /home/philw/piper/piper/en_GB-alan-medium.onnx --output_file /tmp/out.wav'
-    QString command = "/bin/sh";
-    QString arg1;
-    arg1 = arg1.append("-c");
-    QString arg2;
-    arg2 = arg2
-            .append("echo ")
-            .append(text)
-            .append(" | /home/philw/piper/piper/piper ")
-            .append("--model /home/philw/piper/piper/en_GB-alan-medium.onnx --output_file /tmp/out.wav");
+//    // /bin/sh -c 'echo Fritz | /home/philw/piper/piper/piper --model /home/philw/piper/piper/en_GB-alan-medium.onnx --output_file /tmp/out.wav'
+//    QString command = "/bin/sh";
+//    QString arg1;
+//    arg1 = arg1.append("-c");
+//    QString arg2;
+//    arg2 = arg2
+//            .append("echo ")
+//            .append(text)
+//            .append(" | /home/philw/piper/piper/piper ")
+//            .append("--model /home/philw/piper/piper/en_GB-alan-medium.onnx --output_file /tmp/out.wav");
 
-    QStringList args = {arg1, arg2};
+//    QStringList args = {arg1, arg2};
 
-    qDebug() << "Command" << command << " " << arg1 << " "<< arg2;
+//    qDebug() << "Command" << command << " " << arg1 << " "<< arg2;
 
-    QProcess process;
-    process.setStandardOutputFile(QProcess::nullDevice());
-    process.setStandardErrorFile(QProcess::nullDevice());
-    process.start(command,args);
-    process.waitForFinished();
+//    QProcess process;
+//    process.setStandardOutputFile(QProcess::nullDevice());
+//    process.setStandardErrorFile(QProcess::nullDevice());
+//    process.start(command,args);
+//    process.waitForFinished();
 
+// rev5
+//  curl -G --data-urlencode 'text=This is a test.' -o /tmp/out.wav 'localhost:5000'
+        text = text.append(' ');
+        QString command = "curl";
+        QString arg1 ="-G";
+        QString arg2 ="--data-urlencode";
+        QString arg3;
+        arg3 = arg3.append("text=").append(text);
+        QString arg4 = "-o";
+        QString arg5 = QString("/tmp/out%1.wav").arg(counter, 2, 10, QLatin1Char('0'));
+        QString arg6 = "localhost:5000";
 
+        QStringList args = {arg1,arg2,arg3,arg4,arg5,arg6};
+
+        // qDebug() << "Command" << command << " " << arg1 << " "<< arg2 << " " << arg3 << " " << arg4 << " "<< arg5;
+
+        QProcess process;
+        process.setStandardOutputFile(QProcess::nullDevice());
+        process.setStandardErrorFile(QProcess::nullDevice());
+        process.start(command,args);
+        process.waitForFinished();
     return 0;
 }
 
-int Speak::PlayWave()
-{
-    doWork();
-    return 0;
-}
-
-void Speak::doWork()
-{
+int Speak::PlayWave(int counter)
+{     
     QString command = "aplay";
     QProcess process;
-    QStringList args = {"-q","/tmp/out.wav"};
+    QString arg1 = QString("/tmp/out%1.wav").arg(counter, 2, 10, QLatin1Char('0'));
+    QStringList args = {"-q",arg1};
     process.setStandardOutputFile(QProcess::nullDevice());
     process.setStandardErrorFile(QProcess::nullDevice());
-    process.start(command,args);
-    process.waitForFinished();
+    //process.start(command,args);
+    //process.waitForFinished();
+    process.startDetached(command,args);
+    return 0;
 }

@@ -1,12 +1,19 @@
+
 #include "Standard_Library.h"
 #include "System_Library.h"
-extern "C" {
-#include "BCM2835.h"
-#include "PCA9685.h"
-#include "Adafruit_ServoHAT.h"
-}
 
 #include "robot.h"
+
+extern "C" {
+#include "PCA9685.h"
+#include "servo.h"
+}
+}
+
+extern "C" {
+#include "tof.h"
+}
+}
 
 #define FREQUENCY 70
 #define SERVOHATADDR 0x40
@@ -131,12 +138,21 @@ Robot::Robot()
     neckTwistMid = 80;
     neckTwistPin = 0;
 
-    map_peripheral_BCM2835(&gpio);
-    map_peripheral_BCM2835(&bsc0);
+    //map_peripheral_BCM2835(&gpio);
+    //map_peripheral_BCM2835(&bsc0);
 
-    init_I2C_protocol();
-    init_PCA9685(SERVOHATADDR);
-    set_PWM_frequency_PCA9685(SERVOHATADDR, FREQUENCY);
+    //init_I2C_protocol();
+    //init_PCA9685(SERVOHATADDR);
+    //set_PWM_frequency_PCA9685(SERVOHATADDR, FREQUENCY);
+
+    uint8_t rc = 0;
+    uint8_t i2c_node_address = 1;
+    rc = servo_init(i2c_node_address, SERVOHATADDR, FREQUENCY);
+    if (rc != 0) {
+        printf("servo board not attached to /dev/i2c-%d\n", i2c_node_address);
+        return;
+    }
+
     init_angle_to_pulse_length_lookup_table();
 
     set_servo(SERVOHATADDR, neckTwistPin, FREQUENCY, neckTwistMid);
@@ -153,32 +169,37 @@ Robot::Robot()
     set_servo(SERVOHATADDR, leftEyebrowPin, FREQUENCY, leftEyebrowMid);
     set_servo(SERVOHATADDR, rightEyebrowPin, FREQUENCY, rightEyebrowMid);
 
-    // Prime the distance sensor
-    //ranger = new vl53l0x();
-    VL53L0X_Error        Status = VL53L0X_ERROR_NONE;
+    int Status = 0;
+    //VL53L0X_Error Status = VL53L0X_ERROR_NONE;
+
     //VL53L0X_Dev_t        MyDevice;
     //VL53L0X_Dev_t        *pMyDevice = &MyDevice;
     //VL53L0X_Version_t    Version;
     //VL53L0X_Version_t    *pVersion   = &Version;
     //VL53L0X_DeviceInfo_t DeviceInfo;
 
-    VL53L0X_Dev_t *pFrontSensor = &frontSensor;
-    Status = vl53l0x_init(pFrontSensor,"/dev/i2c-1" );
+    //VL53L0X_Dev_t *pFrontSensor = &frontSensor;
+    //Status = vl53l0x_init(pFrontSensor,"/dev/i2c-1" );
+    Status = vl53l0x_init(1, 0x29, 1);  // Channel "/dev/i2c-1",default address, long range mode
+    if(Status < 0) {
+        qDebug() << "Init sensor status: " << Status;
+    }
     usleep(100000);
 
-    VL53L0X_StartMeasurement(pFrontSensor);
+    //Status = VL53L0X_StartMeasurement(pFrontSensor);
     frontLastMeasurement = 0;
-
     int distance = GetDistance();
-    qDebug() << "Distance: " << distance << " Status: " << Status;
-
+    if(Status < 0) {
+        qDebug() << "Start measurement status: " << Status;
+    }
+    //qDebug() << "Distance: " << distance << " Status: " << Status;
 }
 
 Robot::~Robot()
 {
     ResetServo();
-    //delete ranger;
-    VL53L0X_i2c_close();
+
+    //VL53L0X_i2c_close();
 }
 
 void Robot::Reset()
@@ -186,8 +207,14 @@ void Robot::Reset()
 
 }
 
-VL53L0X_Error Robot::printDistance(VL53L0X_Dev_t *pMyDevice)
+int Robot::printDistance()
 {
+    return tofReadDistance();
+}
+
+/* PTBW
+VL53L0X_Error Robot::printDistance(VL53L0X_Dev_t *pMyDevice)
+{    
     VL53L0X_Error Status = VL53L0X_ERROR_NONE;
     VL53L0X_RangingMeasurementData_t    RangingMeasurementData;
     Status = VL53L0X_PerformSingleRangingMeasurement(pMyDevice,
@@ -195,14 +222,19 @@ VL53L0X_Error Robot::printDistance(VL53L0X_Dev_t *pMyDevice)
 
     if (Status != VL53L0X_ERROR_NONE) return Status;
 
-    qDebug() << "Measured distance: " << RangingMeasurementData.RangeMilliMeter;
-
+    qDebug() << "Measured distance: " << RangingMeasurementData.RangeMilliMeter;    
     return Status;
 }
+*/
 
+int Robot::vl53l0x_init(int iChan, int iAddr, int bLongRange)
+{
+    return tofInit(iChan, iAddr, bLongRange);
+}
+
+/* PTBW
 VL53L0X_Error Robot::vl53l0x_init(VL53L0X_Dev_t *pMyDevice, const char * device)
 {
-
     VL53L0X_Error Status = VL53L0X_ERROR_NONE;
 
     uint32_t refSpadCount;
@@ -274,17 +306,11 @@ VL53L0X_Error Robot::vl53l0x_init(VL53L0X_Dev_t *pMyDevice, const char * device)
                 20000);
     }
 
-//    if (Status == VL53L0X_ERROR_NONE) {
-//        Status = VL53L0X_SetVcselPulsePeriod(pMyDevice,
-//		        VL53L0X_VCSEL_PERIOD_PRE_RANGE, 18);
-//    }
-//    if (Status == VL53L0X_ERROR_NONE) {
-//        Status = VL53L0X_SetVcselPulsePeriod(pMyDevice,
-//		        VL53L0X_VCSEL_PERIOD_FINAL_RANGE, 14);
-//   }
     return Status;
 }
+*/
 
+/* PTBW
 int Robot::GetDistance(VL53L0X_Dev_t sensor, int* last){
 
     VL53L0X_Error Status = VL53L0X_ERROR_NONE;
@@ -310,11 +336,12 @@ int Robot::GetDistance(VL53L0X_Dev_t sensor, int* last){
 
     return val;
 }
+*/
+
 
 int Robot::GetDistance()
 {      
-   return GetDistance(frontSensor, &frontLastMeasurement);
-   //return ranger->GetDistance();
+    return tofReadDistance();
 }
 
 void Robot::SetServo(int pin, int angle)
@@ -348,8 +375,8 @@ void Robot::SetServo( Qt::CheckState state, int min, int max, int pin, int val)
     }
 
     if(state == Qt::Checked)
-    {
-        //printf("Servo: %d, Value: %d", pin, val);
+    {        
+        //qDebug() << "SetServo" << " " << pin << " Value "<< val;
         SetServo(pin, val);
     }    
 }
@@ -610,7 +637,7 @@ void Robot::SpeakPhoneme(QString phoneme, QString msg)
     Speak speak;
 
     SetMouth(phoneme);
-    speak.TextToSpeech(msg);
+    speak.TextToSpeech(phoneme);
     I::msleep(120);
     ResetServo();
 }

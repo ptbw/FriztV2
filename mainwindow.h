@@ -93,6 +93,8 @@ private slots:
 
 //    void on_servoPosition_valueChanged(int value);
 
+    void on_btnSpeak_clicked();
+
 private:
     Ui::MainWindow *ui;
 

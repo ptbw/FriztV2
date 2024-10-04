@@ -100,14 +100,15 @@ void MainWindow::on_comboBox_activated(const QString &arg1)
     robot.SetExpression(arg1);    
 }
 
-void MainWindow::SpeakMessage(QString msg)
+/*
+void MainWindow::OldSpeakMessage(QString msg)
 {
     if(animationRunning) return;
 
     msg = msg.replace("\n","");
 
     Robot robot;
-    //robot.SpeakMessage(msg);
+
     Speak speak;
     QStringList words= msg.split(" ",QString::SplitBehavior::KeepEmptyParts);
     QStringListIterator wordit(words);
@@ -130,6 +131,53 @@ void MainWindow::SpeakMessage(QString msg)
         }
         I::msleep(4 * phons.count());
     }
+    robot.SetExpression("Normal");
+}
+*/
+
+void MainWindow::SpeakMessage(QString msg)
+{
+    if(animationRunning) return;
+
+    msg = msg.replace("\n","");
+
+    Robot robot;
+    int counter = 1;
+
+    Speak speak;
+    QStringList words= msg.split(QLatin1Char(' '),Qt::KeepEmptyParts);
+    QStringListIterator wordit(words);
+    while (wordit.hasNext())
+    {
+        QString word = wordit.next();
+        speak.TextToWave(word, counter++ );
+    }
+
+    counter = 1;
+    //words= msg.split(" ",QString::SplitBehavior::KeepEmptyParts);
+    QStringListIterator wordit2(words);
+    while (wordit2.hasNext())
+    {
+        QString word = wordit2.next();
+        QStringList phons = speak.TextToPhon(word);
+        speak.PlayWave(counter++);
+        I::msleep(10);
+
+        //qDebug() << word << " " << phons << Qt::endl;
+        QStringListIterator iterator(phons);
+        while (iterator.hasNext())
+        {
+            QString phon = iterator.next();
+            QString shape = speak.GetMouthShape(phon);
+            if(phon != " ")
+            {
+                robot.SetMouth(shape);
+                I::msleep(80);              // was 90
+            }
+        }
+        I::msleep(7 * phons.count());       // Was 4
+    }
+
     robot.SetExpression("Normal");
 }
 
@@ -161,6 +209,10 @@ void MainWindow::on_btnFortune_clicked()
     process.waitForFinished();
     QString output(process.readAllStandardOutput());
 
+    if(ui->cbSaveFortune->checkState()) {
+        ui->textToSay->setPlainText(output);
+    }
+
     qDebug() << "Fortune: " << output;
     SpeakMessage(output);
 }
@@ -175,7 +227,7 @@ void MainWindow::on_btnOkBye_clicked()
 void MainWindow::on_btnThanks_clicked()
 {
     if(animationRunning) return;
-    QString msg = "Thankyou. Goodbye";
+    QString msg = "Thank you. Goodbye";
     SpeakMessage(msg);
 }
 
@@ -217,7 +269,8 @@ void MainWindow::on_btnAnimate_clicked()
          qDebug() << "Animation starting";
          ui->btnAnimate->setText("Stop Animate");
          animationRunning = true;
-         animate->doWorkOld();
+         animate->doWorkOld();  // Do not move head
+         //animate->doWork();
      }   
 }
 
@@ -233,3 +286,15 @@ void MainWindow::on_volumeSlider_valueChanged(int value)
 
     ui->currentVolume->setText(QString::number(value));
 }
+
+void MainWindow::on_btnSpeak_clicked()
+{
+    if(animationRunning) return;
+
+    QString msg = "Hello. Pleased to meet you!";
+    if( ui->textToSay->toPlainText() != "" )
+        msg = ui->textToSay->toPlainText();
+
+    SpeakMessage(msg);
+}
+

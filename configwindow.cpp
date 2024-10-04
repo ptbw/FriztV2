@@ -102,10 +102,10 @@ ConfigWindow::ConfigWindow(QWidget *parent) :
     fetchImage("fuh");
     fetchImage("i");
     fetchImage("laa");
-    fetchImage("mmm");
+    fetchImage("m");
     fetchImage("oh");
     fetchImage("oooh");
-    fetchImage("sss");
+    fetchImage("s");
 
     thread = new QThread();
     worker = new Worker();
@@ -271,38 +271,50 @@ void ConfigWindow::on_btnTestSpeech_clicked()
 void ConfigWindow::on_btnTestSpeech_2_clicked()
 {
     Speak speak;
-    speak.TextToWave("Your reasoning is excellent -- it's only your basic assumptions that are wrong.");
+    speak.TextToWave("Your reasoning is excellent -- it's only your basic assumptions that are wrong.",1);
+    speak.PlayWave(1);
 }
 
 
 void ConfigWindow::on_btnTestSpeech_3_clicked()
 {
     Speak speak;
-    speak.PlayWave();
+    speak.PlayWave(1);
 }
 
 void ConfigWindow::on_btnTestSpeech_4_clicked()
 {
-    Speak speak;
+
+    int counter = 1;
     QString msg = "Your reasoning is excellent. It's only your basic assumptions that are wrong.";
     if( ui->textToSay->text() != "" )
         msg = ui->textToSay->text();
 
-    QStringList words= msg.split(" ",QString::SplitBehavior::KeepEmptyParts);
+    Speak speak;
+    QStringList words = msg.split(QLatin1Char(' '),Qt::KeepEmptyParts);
     QStringListIterator wordit(words);
     while (wordit.hasNext())
     {
         QString word = wordit.next();
-        QStringList phons = speak.TextToPhon(word);
-        speak.TextToSpeech(word);
+        speak.TextToWave(word, counter++ );
+    }
 
-        //qDebug() << word << " " << phons << Qt::endl;
-        QStringListIterator iterator(phons);
-        while (iterator.hasNext())
+    counter = 1;
+    QStringListIterator wordit2(words);
+    while (wordit2.hasNext())
+    {
+        QString word = wordit2.next();
+        QStringList phons = speak.TextToPhon(word);
+        speak.PlayWave(counter++);
+
+        qDebug() << "Word: " << word;
+        QStringListIterator phonit(phons);
+        while (phonit.hasNext())
         {
-            QString phon = iterator.next();
+            QString phon = phonit.next();
             if(phon != " ")
             {
+                qDebug() << "Phonme: " << phon;
                 QString shape = speak.GetMouthShape(phon);
                 QPixmap pix = imageMap[shape];
                 ui->lblPicture->setPixmap(pix);
@@ -311,9 +323,8 @@ void ConfigWindow::on_btnTestSpeech_4_clicked()
             }            
         }
         I::msleep(4 * phons.count());
-
     }
-    QPixmap pix = imageMap["sss"];
+    QPixmap pix = imageMap["s"];
     ui->lblPicture->setPixmap(pix);
 }
 
@@ -366,6 +377,7 @@ void ConfigWindow::on_btnTestSonar_clicked()
 {
     int distance = robot->GetDistance();
     QString msg = QString::number(distance);
+    qDebug() << "Dist: " << msg;
     ui->textSonar->setText(msg);
 }
 
@@ -404,7 +416,7 @@ void ConfigWindow::on_btnlaa_clicked()
 
 void ConfigWindow::on_btnsss_clicked()
 {
-    SpeakPhoneme("sss","[['3:]]");
+    SpeakPhoneme("s","[['3:]]");
 }
 
 void ConfigWindow::on_btneee_clicked()
@@ -429,7 +441,7 @@ void ConfigWindow::on_btnfuh_clicked()
 
 void ConfigWindow::on_btnmmm_clicked()
 {
-    SpeakPhoneme("mmm","[[m'V]]");
+    SpeakPhoneme("m","[[m'V]]");
 }
 
 

@@ -3,8 +3,8 @@
 
 //#include "vl53l0x.h"
 
-#include "VL53L0X_Rasp/vl53l0x_api.h"
-#include "VL53L0X_Rasp/vl53l0x_platform.h"
+//#include "VL53L0X_Rasp/vl53l0x_api.h"
+//#include "VL53L0X_Rasp/vl53l0x_platform.h"
 
 #include "configwindow.h"
 #include "speak.h"
@@ -123,10 +123,14 @@ public:
     void Reset();
 
     int GetDistance();
-    int GetDistance(VL53L0X_Dev_t pMyDevice, int* lastMeasurement);
-    VL53L0X_Error printDistance(VL53L0X_Dev_t *pMyDevice);
-    VL53L0X_Error vl53l0x_init(VL53L0X_Dev_t *pMyDevice, const char *);
-    VL53L0X_Dev_t frontSensor;
+    //int GetDistance(VL53L0X_Dev_t pMyDevice, int* lastMeasurement);
+
+    //VL53L0X_Error printDistance(VL53L0X_Dev_t *pMyDevice);
+    //VL53L0X_Error vl53l0x_init(VL53L0X_Dev_t *pMyDevice, const char *);
+    //VL53L0X_Dev_t frontSensor;
+
+    int printDistance();
+    int vl53l0x_init(int iChan, int iAddr, int bLongRange);
 
     void SetServo(int pin, int val);
     void ResetServo(int pin, int val);

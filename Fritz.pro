@@ -4,13 +4,16 @@
 #
 #-------------------------------------------------
 
-QT       += core gui #serialport
+QT       += core gui network #serialport
+DEFINES  += QT_NO_SSL
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = Fritz
 TEMPLATE = app
 
+# BCM2835.c \
+# Adafruit_ServoHAT.c \
 
 SOURCES += main.cpp\
         mainwindow.cpp \
@@ -21,11 +24,17 @@ SOURCES += main.cpp\
     worker.cpp \
     keyenterreceiver.cpp \
     animate.cpp \
-    BCM2835.c \
-    Adafruit_ServoHAT.c \
-    PCA9685.c \
-    vl53l0x.cpp \
-    distance.cpp
+    linux_i2c.c \
+    tof.c \
+    servo.c \
+    PCA9685.c
+
+
+
+# vl53l0x.cpp \
+# BCM2835.h \
+# Adafruit_ServoHAT.h \
+# distance.cpp
 
 HEADERS  += mainwindow.h \
     configwindow.h \
@@ -35,14 +44,13 @@ HEADERS  += mainwindow.h \
     speak.h \
     worker.h \
     keyenterreceiver.h \
-    animate.h \
-    BCM2835.h \
-    Adafruit_ServoHAT.h \
+    animate.h \    
+    linux_i2c.h \
+    tof.h \
+    servo.h \
     PCA9685.h \
     Standard_Library.h \
-    System_Library.h \
-    vl53l0x.h \
-    distance.h
+    System_Library.h
 
 FORMS    += mainwindow.ui \
     aboutbox.ui \

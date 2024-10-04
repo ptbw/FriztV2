@@ -10,12 +10,13 @@
 
 class vl53l0x
 {
-    VL53L0X_Error Status = VL53L0X_ERROR_NONE;
+    VL53L0X_Error Status = VL53L0X_ERROR_NONE;    
     VL53L0X_Dev_t MyDevice;
     VL53L0X_Dev_t *pMyDevice = &MyDevice;
     VL53L0X_Version_t                   Version;
     VL53L0X_Version_t                  *pVersion   = &Version;
     VL53L0X_DeviceInfo_t                DeviceInfo;
+
 
 public:
     vl53l0x();

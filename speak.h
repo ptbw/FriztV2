@@ -24,9 +24,9 @@ public:
     QString GetMouthShape(QString phon);
     QStringList TextToPhon(QString text);
     int TextToSpeech(QString text);
-    int TextToWave(QString text);
-    int PlayWave();
-    void doWork();
+    int TextToWave(QString text, int counter);
+    int PlayWave(int counter);
+
 };
 
 #endif // SPEAK_H

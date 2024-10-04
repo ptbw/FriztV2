@@ -140,7 +140,7 @@ void Animate::doWorkOld()
     _abort = false;
 
     int sonar = 0;
-    ConvState state = Hello;
+    ConvState state = Idle;
     bool running = true;
     Robot robot;
 
@@ -149,37 +149,61 @@ void Animate::doWorkOld()
 
     while(state != Exit)
     {
-        if(state == Hello)
-        {
-            SpeakMessage(robot, "Hello my name is Fritz");
+        sonar = robot.GetDistance();
+        //qDebug() << "State: " << state << "Distance: " << sonar;
+
+        // Fritz "sees" someone and greets them
+        if(sonar >= 0 && sonar <= MINDISTANCE && state == Idle){
+            state = Hello;
             I::msleep(1000);
         }
-        if(state == WhatsYourName)
+
+        // If they wander off then Fritz says by
+        if(sonar >= 0 && sonar >= MINDISTANCE && state < GoodBye){
+            state = GoodBye;
+            I::msleep(1000);
+        }
+
+        if(sonar >= 0 && sonar <= MINDISTANCE && state == Hello)
         {
-            SpeakMessage(robot, "What is your name?");
+            SpeakMessage(robot, "Hello my name is Fritz");            
+            state = WhatsYourName;
+            I::msleep(1000);
+        }
+        if(sonar >= 0 && sonar <= MINDISTANCE && state == WhatsYourName)
+        {
+            SpeakMessage(robot, "What is your name?");            
+            state = PleaseToMeetYou;
             I::msleep(2000);
         }
-        if(state == PleaseToMeetYou)
+        if(sonar >= 0 && sonar <= MINDISTANCE && state == PleaseToMeetYou)
         {
-            SpeakMessage(robot, "Pleased to meet you");
+            SpeakMessage(robot, "Pleased to meet you");            
+            state = AskFortune;
             I::msleep(2000);
         }
-        if(state == AskFortune)
+        if(sonar >= 0 && sonar <= MINDISTANCE && state == AskFortune)
         {
-            SpeakMessage(robot, "Can I tell your fortune");
+            SpeakMessage(robot, "Can I tell your fortune");            
+            state = ReplyFortune;
             I::msleep(2000);
         }
-        if(state == ReplyFortune)
+        if(sonar >= 0 && sonar <= MINDISTANCE && state == ReplyFortune)
         {
-            SpeakFortune(robot);
+            SpeakFortune(robot);            
+            state = GoodBye;
             I::msleep(2000);
         }
-        if(state == GoodBye)
+        if(sonar >= 0 && sonar <= MINDISTANCE && state == GoodBye)
         {
-           SpeakMessage(robot, "Good bye");
+           SpeakMessage(robot, "Good bye");           
+           state = Idle;
            I::msleep(1000);
         }
-        state = (ConvState)(state + 1);
+        if(sonar >= MINDISTANCE)
+        {
+            I::msleep(1000);
+        }
     }
     robot.SetExpression("Neutral");
     I::msleep(2000);

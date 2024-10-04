@@ -37,15 +37,16 @@ int pulse_length_to_tick_converter(int frequency, int pulseLength){
 }
 
 void set_servo(uint8_t hwAddress, uint8_t pwmChannel, int frequency, double angleDegree){
-    if(angleDegree < 5.0 || angleDegree > 175.0){
-        printf("angle %.2f is out of servo range. Exit....\n", angleDegree);
-        //exit(1);
+    if(angleDegree <= 5.0 || angleDegree >= 175.0){
+        printf("angle %.2f is out of servo range. Exit....\n", angleDegree);        
         return;
 	}
 
-    int key = (int)(angleDegree * 10);
-    //printf("Angle = %.2f Key = %d \n", angleDegree, key);
+    int key = (int)(angleDegree * 10);    
     int pulseLength = angleToPulseLengthLookupTable[key];
 	uint16_t offTime = (uint16_t)pulse_length_to_tick_converter(frequency, pulseLength);
+    if( offTime > 0) {
+        printf("angle %f, pulseLength %d, offTime %x\n", angleDegree, pulseLength, offTime);
+    }
 	set_PWM_PCA9685(hwAddress, pwmChannel, 0, offTime);	
 }
